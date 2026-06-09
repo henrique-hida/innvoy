@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Guest } from './domain/guest';
+import { IDAO } from '../core/idao';
 
 @Injectable()
-export class GuestDAO {
+export class GuestDAO implements IDAO {
   constructor(
     @InjectRepository(Guest)
     private readonly repo: Repository<Guest>,

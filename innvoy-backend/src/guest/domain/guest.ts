@@ -1,6 +1,6 @@
 import { Column, Entity, OneToOne } from 'typeorm';
 import { Address } from './address';
-import { DomainEntity } from './domain-entity';
+import { DomainEntity } from '../../core/domain-entity';
 
 @Entity('guests')
 export class Guest extends DomainEntity {

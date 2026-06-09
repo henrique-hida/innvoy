@@ -33,19 +33,19 @@ describe('ValidateEmailStrategy', () => {
   describe('valid emails', () => {
     it('should pass with a simple valid email', async () => {
       await expect(
-        strategy.validate(makeGuest('joao@example.com')),
+        strategy.proccess(makeGuest('joao@example.com')),
       ).resolves.not.toThrow();
     });
 
     it('should pass with a subdomain email', async () => {
       await expect(
-        strategy.validate(makeGuest('joao@mail.example.com.br')),
+        strategy.proccess(makeGuest('joao@mail.example.com.br')),
       ).resolves.not.toThrow();
     });
 
     it('should pass with plus addressing', async () => {
       await expect(
-        strategy.validate(makeGuest('joao+hotel@example.com')),
+        strategy.proccess(makeGuest('joao+hotel@example.com')),
       ).resolves.not.toThrow();
     });
   });
@@ -53,43 +53,43 @@ describe('ValidateEmailStrategy', () => {
   describe('invalid emails', () => {
     it('should throw when email has no @ symbol', async () => {
       await expect(
-        strategy.validate(makeGuest('joaoexample.com')),
+        strategy.proccess(makeGuest('joaoexample.com')),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when email has no domain', async () => {
-      await expect(strategy.validate(makeGuest('joao@'))).rejects.toThrow(
+      await expect(strategy.proccess(makeGuest('joao@'))).rejects.toThrow(
         BadRequestException,
       );
     });
 
     it('should throw when email has no local part', async () => {
       await expect(
-        strategy.validate(makeGuest('@example.com')),
+        strategy.proccess(makeGuest('@example.com')),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when email has no TLD', async () => {
       await expect(
-        strategy.validate(makeGuest('joao@example')),
+        strategy.proccess(makeGuest('joao@example')),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when email has consecutive dots in domain', async () => {
       await expect(
-        strategy.validate(makeGuest('joao@example..com')),
+        strategy.proccess(makeGuest('joao@example..com')),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when email is an empty string', async () => {
-      await expect(strategy.validate(makeGuest(''))).rejects.toThrow(
+      await expect(strategy.proccess(makeGuest(''))).rejects.toThrow(
         BadRequestException,
       );
     });
 
     it('should throw when email contains spaces', async () => {
       await expect(
-        strategy.validate(makeGuest('joao silva@example.com')),
+        strategy.proccess(makeGuest('joao silva@example.com')),
       ).rejects.toThrow(BadRequestException);
     });
   });

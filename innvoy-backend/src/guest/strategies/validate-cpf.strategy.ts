@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { GuestDAO } from '../guest.dao';
 import { Guest } from '../domain/guest';
+import { IStrategy } from '../../core/istrategy';
 
 @Injectable()
-export class ValidateCPFStrategy {
+export class ValidateCPFStrategy implements IStrategy {
   constructor(private readonly dao: GuestDAO) {}
 
-  async validate(guest: Guest): Promise<void> {
+  async proccess(guest: Guest): Promise<void> {
     const digits = guest.cpf.replace(/\D/g, '');
 
     if (digits.length !== 11) {

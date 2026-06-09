@@ -4,9 +4,10 @@ import { Guest } from './domain/guest';
 import { ValidateCPFStrategy } from './strategies/validate-cpf.strategy';
 import { ValidateEmailStrategy } from './strategies/validate-email.strategy';
 import { ValidateRequiredFieldsStrategy } from './strategies/validate-required-fields.strategy';
+import { IFacade } from '../core/ifacade';
 
 @Injectable()
-export class GuestFacade {
+export class GuestFacade implements IFacade {
   constructor(
     private readonly validateRequired: ValidateRequiredFieldsStrategy,
     private readonly validateCPF: ValidateCPFStrategy,
@@ -16,16 +17,16 @@ export class GuestFacade {
 
   async create(guest: Guest): Promise<Guest> {
     guest.cpf = guest.cpf.replace(/\D/g, '');
-    await this.validateRequired.validate(guest);
-    await this.validateCPF.validate(guest);
-    await this.validateEmail.validate(guest);
+    await this.validateRequired.proccess(guest);
+    await this.validateCPF.proccess(guest);
+    await this.validateEmail.proccess(guest);
     return this.dao.save(guest);
   }
 
   async update(guest: Guest): Promise<Guest> {
     guest.cpf = guest.cpf.replace(/\D/g, '');
-    await this.validateRequired.validate(guest);
-    await this.validateEmail.validate(guest);
+    await this.validateRequired.proccess(guest);
+    await this.validateEmail.proccess(guest);
     return this.dao.update(guest);
   }
 

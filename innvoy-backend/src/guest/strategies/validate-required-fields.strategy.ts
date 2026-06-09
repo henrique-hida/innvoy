@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Address } from '../domain/address';
 import { Guest } from '../domain/guest';
+import { IStrategy } from '../../core/istrategy';
 
 @Injectable()
-export class ValidateRequiredFieldsStrategy {
-  validate(guest: Guest): Promise<void> {
+export class ValidateRequiredFieldsStrategy implements IStrategy {
+  proccess(guest: Guest): Promise<void> {
     try {
       this.checkPersonalData(guest);
       this.checkAddressData(guest.address);

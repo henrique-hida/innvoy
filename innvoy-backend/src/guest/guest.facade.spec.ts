@@ -41,15 +41,15 @@ describe('GuestFacade', () => {
         GuestFacade,
         {
           provide: ValidateRequiredFieldsStrategy,
-          useValue: { validate: jest.fn().mockResolvedValue(undefined) },
+          useValue: { proccess: jest.fn().mockResolvedValue(undefined) },
         },
         {
           provide: ValidateCPFStrategy,
-          useValue: { validate: jest.fn().mockResolvedValue(undefined) },
+          useValue: { proccess: jest.fn().mockResolvedValue(undefined) },
         },
         {
           provide: ValidateEmailStrategy,
-          useValue: { validate: jest.fn().mockResolvedValue(undefined) },
+          useValue: { proccess: jest.fn().mockResolvedValue(undefined) },
         },
         {
           provide: GuestDAO,
@@ -77,9 +77,9 @@ describe('GuestFacade', () => {
 
       const result = await facade.create(guest);
 
-      expect(validateRequired.validate).toHaveBeenCalledWith(guest);
-      expect(validateCPF.validate).toHaveBeenCalledWith(guest);
-      expect(validateEmail.validate).toHaveBeenCalledWith(guest);
+      expect(validateRequired.proccess).toHaveBeenCalledWith(guest);
+      expect(validateCPF.proccess).toHaveBeenCalledWith(guest);
+      expect(validateEmail.proccess).toHaveBeenCalledWith(guest);
       expect(dao.save).toHaveBeenCalledWith(guest);
       expect(result).toBe(guest);
     });
@@ -90,7 +90,7 @@ describe('GuestFacade', () => {
 
       await facade.create(guest);
 
-      expect(validateCPF.validate).toHaveBeenCalledWith(
+      expect(validateCPF.proccess).toHaveBeenCalledWith(
         expect.objectContaining({ cpf: '52998224725' }),
       );
       expect(dao.save).toHaveBeenCalledWith(
@@ -100,7 +100,7 @@ describe('GuestFacade', () => {
 
     it('should not save when required fields validation fails', async () => {
       const guest = makeGuest();
-      validateRequired.validate.mockRejectedValue(
+      validateRequired.proccess.mockRejectedValue(
         new BadRequestException('Required field missing'),
       );
 
@@ -110,7 +110,7 @@ describe('GuestFacade', () => {
 
     it('should not save when CPF validation fails', async () => {
       const guest = makeGuest();
-      validateCPF.validate.mockRejectedValue(
+      validateCPF.proccess.mockRejectedValue(
         new BadRequestException('Invalid CPF'),
       );
 
@@ -120,7 +120,7 @@ describe('GuestFacade', () => {
 
     it('should not save when email validation fails', async () => {
       const guest = makeGuest();
-      validateEmail.validate.mockRejectedValue(
+      validateEmail.proccess.mockRejectedValue(
         new BadRequestException('Invalid email'),
       );
 
@@ -136,8 +136,8 @@ describe('GuestFacade', () => {
 
       const result = await facade.update(guest);
 
-      expect(validateRequired.validate).toHaveBeenCalledWith(guest);
-      expect(validateEmail.validate).toHaveBeenCalledWith(guest);
+      expect(validateRequired.proccess).toHaveBeenCalledWith(guest);
+      expect(validateEmail.proccess).toHaveBeenCalledWith(guest);
       expect(dao.update).toHaveBeenCalledWith(guest);
       expect(result).toBe(guest);
     });
@@ -159,12 +159,12 @@ describe('GuestFacade', () => {
 
       await facade.update(guest);
 
-      expect(validateCPF.validate).not.toHaveBeenCalled();
+      expect(validateCPF.proccess).not.toHaveBeenCalled();
     });
 
     it('should not update when required fields validation fails', async () => {
       const guest = makeGuest();
-      validateRequired.validate.mockRejectedValue(
+      validateRequired.proccess.mockRejectedValue(
         new BadRequestException('Required field missing'),
       );
 
@@ -174,7 +174,7 @@ describe('GuestFacade', () => {
 
     it('should not update when email validation fails', async () => {
       const guest = makeGuest();
-      validateEmail.validate.mockRejectedValue(
+      validateEmail.proccess.mockRejectedValue(
         new BadRequestException('Invalid email'),
       );
 
@@ -197,9 +197,9 @@ describe('GuestFacade', () => {
 
       await facade.deactivate(1);
 
-      expect(validateRequired.validate).not.toHaveBeenCalled();
-      expect(validateCPF.validate).not.toHaveBeenCalled();
-      expect(validateEmail.validate).not.toHaveBeenCalled();
+      expect(validateRequired.proccess).not.toHaveBeenCalled();
+      expect(validateCPF.proccess).not.toHaveBeenCalled();
+      expect(validateEmail.proccess).not.toHaveBeenCalled();
     });
   });
 
@@ -220,9 +220,9 @@ describe('GuestFacade', () => {
 
       await facade.findAll({});
 
-      expect(validateRequired.validate).not.toHaveBeenCalled();
-      expect(validateCPF.validate).not.toHaveBeenCalled();
-      expect(validateEmail.validate).not.toHaveBeenCalled();
+      expect(validateRequired.proccess).not.toHaveBeenCalled();
+      expect(validateCPF.proccess).not.toHaveBeenCalled();
+      expect(validateEmail.proccess).not.toHaveBeenCalled();
     });
   });
 });

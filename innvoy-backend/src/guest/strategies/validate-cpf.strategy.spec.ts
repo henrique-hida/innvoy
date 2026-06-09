@@ -37,43 +37,43 @@ describe('ValidateCPFStrategy', () => {
   describe('format validation', () => {
     it('should pass with a valid formatted CPF (529.982.247-25)', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '529.982.247-25' })),
+        strategy.proccess(makeGuest({ cpf: '529.982.247-25' })),
       ).resolves.not.toThrow();
     });
 
     it('should pass with a valid unformatted CPF (52998224725)', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '52998224725' })),
+        strategy.proccess(makeGuest({ cpf: '52998224725' })),
       ).resolves.not.toThrow();
     });
 
     it('should pass with another valid CPF (853.513.468-93)', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '853.513.468-93' })),
+        strategy.proccess(makeGuest({ cpf: '853.513.468-93' })),
       ).resolves.not.toThrow();
     });
 
     it('should pass with a CPF whose check digits are zero (123.456.789-09)', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '123.456.789-09' })),
+        strategy.proccess(makeGuest({ cpf: '123.456.789-09' })),
       ).resolves.not.toThrow();
     });
 
     it('should throw when CPF is too short', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '123.456.789' })),
+        strategy.proccess(makeGuest({ cpf: '123.456.789' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when CPF has too many digits', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '123.456.789-001' })),
+        strategy.proccess(makeGuest({ cpf: '123.456.789-001' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when CPF contains non-numeric characters', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: 'abc.def.ghi-jk' })),
+        strategy.proccess(makeGuest({ cpf: 'abc.def.ghi-jk' })),
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -81,25 +81,25 @@ describe('ValidateCPFStrategy', () => {
   describe('check digit validation', () => {
     it('should throw when the first check digit is wrong', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '529.982.247-35' })),
+        strategy.proccess(makeGuest({ cpf: '529.982.247-35' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when the second check digit is wrong', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '529.982.247-26' })),
+        strategy.proccess(makeGuest({ cpf: '529.982.247-26' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when all digits are the same (111.111.111-11)', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '111.111.111-11' })),
+        strategy.proccess(makeGuest({ cpf: '111.111.111-11' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when all digits are the same (000.000.000-00)', async () => {
       await expect(
-        strategy.validate(makeGuest({ cpf: '000.000.000-00' })),
+        strategy.proccess(makeGuest({ cpf: '000.000.000-00' })),
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -110,7 +110,7 @@ describe('ValidateCPFStrategy', () => {
       dao.findByCPF.mockResolvedValue(existingGuest);
 
       const guest = makeGuest({ id: 1 });
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
@@ -119,7 +119,7 @@ describe('ValidateCPFStrategy', () => {
       const guest = makeGuest({ id: 1 });
       dao.findByCPF.mockResolvedValue(guest);
 
-      await expect(strategy.validate(guest)).resolves.not.toThrow();
+      await expect(strategy.proccess(guest)).resolves.not.toThrow();
     });
 
     it('should throw when CPF is already in use and guest has no id (create scenario)', async () => {
@@ -127,7 +127,7 @@ describe('ValidateCPFStrategy', () => {
       dao.findByCPF.mockResolvedValue(existingGuest);
 
       const newGuest = makeGuest({ id: undefined });
-      await expect(strategy.validate(newGuest)).rejects.toThrow(
+      await expect(strategy.proccess(newGuest)).rejects.toThrow(
         BadRequestException,
       );
     });
@@ -136,7 +136,7 @@ describe('ValidateCPFStrategy', () => {
       dao.findByCPF.mockResolvedValue(null);
 
       const guest = makeGuest({ id: undefined });
-      await expect(strategy.validate(guest)).resolves.not.toThrow();
+      await expect(strategy.proccess(guest)).resolves.not.toThrow();
     });
   });
 });

@@ -31,41 +31,41 @@ describe('ValidateRequiredFieldsStrategy', () => {
   });
 
   it('should pass when all required fields are present', async () => {
-    await expect(strategy.validate(makeGuest())).resolves.not.toThrow();
+    await expect(strategy.proccess(makeGuest())).resolves.not.toThrow();
   });
 
   describe('personal data', () => {
     it('should throw when fullName is empty', async () => {
       const guest = { ...makeGuest(), fullName: '' };
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
 
     it('should throw when cpf is empty', async () => {
       const guest = { ...makeGuest(), cpf: '' };
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
 
     it('should throw when dateOfBirth is missing', async () => {
       const guest = { ...makeGuest(), dateOfBirth: null as unknown as Date };
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
 
     it('should throw when phone is empty', async () => {
       const guest = { ...makeGuest(), phone: '' };
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
 
     it('should throw when email is empty', async () => {
       const guest = { ...makeGuest(), email: '' };
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
@@ -79,31 +79,31 @@ describe('ValidateRequiredFieldsStrategy', () => {
 
     it('should throw when street is empty', async () => {
       await expect(
-        strategy.validate(withAddress({ street: '' })),
+        strategy.proccess(withAddress({ street: '' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when address number is empty', async () => {
       await expect(
-        strategy.validate(withAddress({ number: '' })),
+        strategy.proccess(withAddress({ number: '' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when zipCode is empty', async () => {
       await expect(
-        strategy.validate(withAddress({ zipCode: '' })),
+        strategy.proccess(withAddress({ zipCode: '' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when neighborhood is empty', async () => {
       await expect(
-        strategy.validate(withAddress({ neighborhood: '' })),
+        strategy.proccess(withAddress({ neighborhood: '' })),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when complement is empty', async () => {
       await expect(
-        strategy.validate(withAddress({ complement: '' })),
+        strategy.proccess(withAddress({ complement: '' })),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -111,7 +111,7 @@ describe('ValidateRequiredFieldsStrategy', () => {
       const guest = withAddress({
         city: { name: '', state: makeGuest().address.city.state },
       });
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
@@ -120,7 +120,7 @@ describe('ValidateRequiredFieldsStrategy', () => {
       const guest = withAddress({
         city: { name: 'São Paulo', state: { name: '', abbreviation: 'SP' } },
       });
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
@@ -132,7 +132,7 @@ describe('ValidateRequiredFieldsStrategy', () => {
           state: { name: 'São Paulo', abbreviation: '' },
         },
       });
-      await expect(strategy.validate(guest)).rejects.toThrow(
+      await expect(strategy.proccess(guest)).rejects.toThrow(
         BadRequestException,
       );
     });
