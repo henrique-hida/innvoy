@@ -18,49 +18,6 @@ Business rules that apply to guests (from `docs/requirements.md`):
 - **RN0202** — CPF must be unique in the system
 - **RN0211** — Email must be in a valid format
 
-## Guest CRUD — Required Design
-
-All classes below must live inside `src/guest/`. Follow this structure exactly.
-
-### Domain model
-
-Four classes representing the data model — no logic, only properties:
-
-- **`Guest`** — full name, CPF, date of birth, phone, email, active (boolean), address (`Address`)
-- **`Address`** — street, number, ZIP code, neighborhood, complement, `City`
-- **`City`** — name, `State`
-- **`State`** — name, abbreviation
-
-### Layers (must be implemented in this order, TDD)
-
-**`GuestController`**
-- 4 methods: `create(guest)`, `update(guest)`, `deactivate(guest)`, `findAll(filters)`
-- Receives/returns HTTP requests only — no business logic here
-- Delegates everything to `GuestFacade`
-
-**`GuestFacade`**
-- 4 methods matching the controller: `create(guest)`, `update(guest)`, `deactivate(guest)`, `findAll(filters)`
-- All methods receive the full guest object (or filters for `findAll`)
-- Orchestrates validation strategies before calling the DAO
-- Does not contain validation logic directly — delegates to strategies
-
-**Validation strategies** — each is its own class with a single `validate(guest)` method:
-- **`ValidateRequiredFieldsStrategy`** — checks RN0201 (all required fields present and non-empty)
-- **`ValidateCPFStrategy`** — checks RN0202 (valid CPF format and uniqueness via DAO)
-- **`ValidateEmailStrategy`** — checks RN0211 (valid email format)
-
-**`GuestDAO`**
-- Wraps TypeORM repository
-- Methods: `save(guest)`, `update(guest)`, `deactivate(id)`, `findAll(filters)`, `findByCPF(cpf)`
-- No business logic — pure data access
-
-### Dependency flow
-
-```
-GuestController → GuestFacade → [ValidateRequiredFieldsStrategy, ValidateCPFStrategy, ValidateEmailStrategy]
-                              → GuestDAO → TypeORM
-```
-
 ## Architecture
 
 Monorepo with two apps orchestrated via Docker Compose:

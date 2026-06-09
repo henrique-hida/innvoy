@@ -24,6 +24,8 @@ services:
       - /app/node_modules
     env_file:
       - .env
+    environment:
+      - BACKEND_URL=http://backend:3000
     depends_on:
       - backend
 
