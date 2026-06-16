@@ -1,0 +1,51 @@
+databases:
+  - name: innvoy-db
+    databaseName: innvoy
+    user: innvoy
+    plan: starter
+
+services:
+  - type: web
+    name: innvoy-backend
+    plan: free
+    runtime: docker
+    dockerfilePath: ./innvoy-backend/Dockerfile
+    dockerContext: ./innvoy-backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TYPEORM_SYNCHRONIZE
+        value: "true"
+      - key: DB_HOST
+        fromDatabase:
+          name: innvoy-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: innvoy-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: innvoy-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: innvoy-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: innvoy-db
+          property: database
+
+  - type: web
+    name: innvoy-frontend
+    plan: free
+    runtime: docker
+    dockerfilePath: ./innvoy-frontend/Dockerfile
+    dockerContext: ./innvoy-frontend
+    envVars:
+      - key: BACKEND_URL
+        fromService:
+          name: innvoy-backend
+          type: web
+          property: connectURL
