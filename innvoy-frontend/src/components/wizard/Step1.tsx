@@ -2,6 +2,7 @@ import type { ChangeEvent } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FormField } from './FormField';
+import { Stepper } from './Stepper';
 import { maskCPF, maskPhone, maskDate } from '@/lib/masks';
 import { useLang } from '@/i18n/context';
 import type { PersonalFields } from './formState';
@@ -31,14 +32,7 @@ export default function Step1({ fields, errors, isEditing, onChange, onNext }: P
 
   return (
     <>
-      <div className="mb-6 flex gap-2">
-        <span className="rounded-full border border-ring bg-primary/5 px-3 py-0.5 text-xs font-medium text-primary">
-          {t.step1Label}
-        </span>
-        <span className="rounded-full border px-3 py-0.5 text-xs text-muted-foreground">
-          {t.step2Label}
-        </span>
-      </div>
+      <Stepper current={1} />
 
       <fieldset className="mb-5 rounded-xl border p-5">
         <legend className="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -94,7 +88,7 @@ export default function Step1({ fields, errors, isEditing, onChange, onNext }: P
       </fieldset>
 
       <div className="flex justify-end">
-        <Button type="button" onClick={onNext}>
+        <Button type="button" size="lg" className="px-6" onClick={onNext}>
           {t.nextStep}
         </Button>
       </div>

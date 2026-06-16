@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import GuestList from './pages/GuestList';
 import GuestCreate from './pages/GuestCreate';
 import GuestEdit from './pages/GuestEdit';
-import isotipo from './assets/isotipo_blue.svg';
+import imagotipo from './assets/imagotipo_white.svg';
 import { LangProvider, useLang } from './i18n/context';
 
 function LangToggle() {
@@ -11,7 +11,7 @@ function LangToggle() {
   return (
     <button
       onClick={() => setLang(next)}
-      className="rounded-md px-2.5 py-1 text-xs font-medium text-muted-foreground ring-1 ring-border hover:bg-muted"
+      className="rounded-md px-2.5 py-1 text-xs font-medium text-white ring-1 ring-white/30 hover:bg-white/10"
     >
       {next.toUpperCase()}
     </button>
@@ -21,15 +21,12 @@ function LangToggle() {
 function Shell() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="flex items-center justify-between border-b px-8 py-3">
-        <Link to="/guests" className="flex items-center gap-2.5">
-          <img src={isotipo} alt="" className="h-8 w-auto" aria-hidden="true" />
-          <span
-            className="text-xl font-semibold tracking-tight"
-            style={{ color: 'rgb(51,53,100)' }}
-          >
-            innvoy
-          </span>
+      <header
+        className="flex items-center justify-between px-8 py-3"
+        style={{ backgroundColor: 'rgb(51,53,100)' }}
+      >
+        <Link to="/guests" className="flex items-center">
+          <img src={imagotipo} alt="innvoy" className="h-7 w-auto" />
         </Link>
         <LangToggle />
       </header>

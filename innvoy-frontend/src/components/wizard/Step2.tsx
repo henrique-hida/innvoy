@@ -7,6 +7,7 @@ import { maskZip } from '@/lib/masks';
 import { UF_TO_STATE } from '@/lib/states';
 import { useLang } from '@/i18n/context';
 import { FormField } from './FormField';
+import { Stepper } from './Stepper';
 import type { AddressFields } from './formState';
 
 type FieldErrors = Record<string, string>;
@@ -79,10 +80,14 @@ export default function Step2({
 }: Props) {
   const { t } = useLang();
   const [municipalities, setMunicipalities] = useState<Municipality[]>([]);
+  const [citiesLoading, setCitiesLoading] = useState(true);
   const [cepLoading, setCepLoading] = useState(false);
 
   useEffect(() => {
-    void fetchMunicipalities().then(setMunicipalities);
+    void fetchMunicipalities()
+      .then(setMunicipalities)
+      .catch(() => undefined)
+      .finally(() => setCitiesLoading(false));
   }, []);
 
   const set = (key: keyof AddressFields) => (e: ChangeEvent<HTMLInputElement>) =>
@@ -122,14 +127,7 @@ export default function Step2({
 
   return (
     <>
-      <div className="mb-6 flex gap-2">
-        <span className="rounded-full border px-3 py-0.5 text-xs text-muted-foreground">
-          {t.step1Label}
-        </span>
-        <span className="rounded-full border border-ring bg-primary/5 px-3 py-0.5 text-xs font-medium text-primary">
-          {t.step2Label}
-        </span>
-      </div>
+      <Stepper current={2} />
 
       <fieldset className="mb-5 rounded-xl border p-5">
         <legend className="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -176,7 +174,7 @@ export default function Step2({
 
           <FormField
             id="citySearch"
-            label={municipalities.length === 0 ? t.cityLoading : t.cityField}
+            label={citiesLoading ? t.cityLoading : t.cityField}
             error={errors.citySearch}
           >
             <Input
