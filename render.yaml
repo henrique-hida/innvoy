@@ -2,7 +2,7 @@ databases:
   - name: innvoy-db
     databaseName: innvoy
     user: innvoy
-    plan: starter
+    plan: free
 
 services:
   - type: web
