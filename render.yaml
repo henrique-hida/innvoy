@@ -44,8 +44,8 @@ services:
     dockerfilePath: ./innvoy-frontend/Dockerfile
     dockerContext: ./innvoy-frontend
     envVars:
-      - key: BACKEND_URL
+      - key: BACKEND_HOST
         fromService:
           name: innvoy-backend
           type: web
-          property: connectURL
+          property: host
