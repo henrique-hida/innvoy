@@ -1,35 +1,36 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { GuestFacade } from './guest.facade';
-import { GuestDAO } from './guest.dao';
-import { Guest } from './domain/guest';
-import { ValidateCPFStrategy } from './strategies/validate-cpf.strategy';
-import { ValidateEmailStrategy } from './strategies/validate-email.strategy';
-import { ValidateRequiredFieldsStrategy } from './strategies/validate-required-fields.strategy';
+import { Facade } from './facade';
+import { GuestDAO } from '../guest/guest.dao';
+import { Guest } from '../guest/domain/guest';
+import { ValidateCPFStrategy } from '../guest/strategies/validate-cpf.strategy';
+import { ValidateEmailStrategy } from '../guest/strategies/validate-email.strategy';
+import { ValidateRequiredFieldsStrategy } from '../guest/strategies/validate-required-fields.strategy';
 
-const makeGuest = (): Guest => ({
-  id: 1,
-  fullName: 'João da Silva',
-  cpf: '529.982.247-25',
-  dateOfBirth: new Date('1990-01-15'),
-  phone: '(11) 99999-9999',
-  email: 'joao@example.com',
-  active: true,
-  address: {
-    street: 'Rua das Flores',
-    number: '123',
-    zipCode: '01310-100',
-    neighborhood: 'Centro',
-    complement: 'Apto 4',
-    city: {
-      name: 'São Paulo',
-      state: { name: 'São Paulo', abbreviation: 'SP' },
+const makeGuest = (): Guest =>
+  Object.assign(new Guest(), {
+    id: 1,
+    fullName: 'João da Silva',
+    cpf: '529.982.247-25',
+    dateOfBirth: new Date('1990-01-15'),
+    phone: '(11) 99999-9999',
+    email: 'joao@example.com',
+    active: true,
+    address: {
+      street: 'Rua das Flores',
+      number: '123',
+      zipCode: '01310-100',
+      neighborhood: 'Centro',
+      complement: 'Apto 4',
+      city: {
+        name: 'São Paulo',
+        state: { name: 'São Paulo', abbreviation: 'SP' },
+      },
     },
-  },
-});
+  });
 
-describe('GuestFacade', () => {
-  let facade: GuestFacade;
+describe('Facade', () => {
+  let facade: Facade;
   let dao: jest.Mocked<GuestDAO>;
   let validateRequired: jest.Mocked<ValidateRequiredFieldsStrategy>;
   let validateCPF: jest.Mocked<ValidateCPFStrategy>;
@@ -38,7 +39,16 @@ describe('GuestFacade', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        GuestFacade,
+        Facade,
+        {
+          provide: GuestDAO,
+          useValue: {
+            save: jest.fn(),
+            update: jest.fn(),
+            deactivate: jest.fn(),
+            findAll: jest.fn(),
+          },
+        },
         {
           provide: ValidateRequiredFieldsStrategy,
           useValue: { proccess: jest.fn().mockResolvedValue(undefined) },
@@ -51,19 +61,10 @@ describe('GuestFacade', () => {
           provide: ValidateEmailStrategy,
           useValue: { proccess: jest.fn().mockResolvedValue(undefined) },
         },
-        {
-          provide: GuestDAO,
-          useValue: {
-            save: jest.fn(),
-            update: jest.fn(),
-            deactivate: jest.fn(),
-            findAll: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
-    facade = module.get(GuestFacade);
+    facade = module.get(Facade);
     dao = module.get(GuestDAO);
     validateRequired = module.get(ValidateRequiredFieldsStrategy);
     validateCPF = module.get(ValidateCPFStrategy);
@@ -71,7 +72,7 @@ describe('GuestFacade', () => {
   });
 
   describe('create', () => {
-    it('should run all validation strategies then save the guest', async () => {
+    it('should run all registered strategies then save via DAO', async () => {
       const guest = makeGuest();
       dao.save.mockResolvedValue(guest);
 
@@ -85,7 +86,7 @@ describe('GuestFacade', () => {
     });
 
     it('should normalize CPF to digits before validating and saving', async () => {
-      const guest = makeGuest(); // cpf: '529.982.247-25'
+      const guest = makeGuest();
       dao.save.mockResolvedValue(guest);
 
       await facade.create(guest);
@@ -130,7 +131,7 @@ describe('GuestFacade', () => {
   });
 
   describe('update', () => {
-    it('should run required fields and email strategies then update the guest', async () => {
+    it('should run required fields and email strategies then update via DAO', async () => {
       const guest = makeGuest();
       dao.update.mockResolvedValue(guest);
 
@@ -184,18 +185,20 @@ describe('GuestFacade', () => {
   });
 
   describe('deactivate', () => {
-    it('should delegate to dao.deactivate with the guest id', async () => {
+    it('should delegate to DAO with the entity id', async () => {
+      const guest = makeGuest();
       dao.deactivate.mockResolvedValue(undefined);
 
-      await facade.deactivate(1);
+      await facade.deactivate(guest);
 
       expect(dao.deactivate).toHaveBeenCalledWith(1);
     });
 
     it('should not run any validation strategy on deactivate', async () => {
+      const guest = makeGuest();
       dao.deactivate.mockResolvedValue(undefined);
 
-      await facade.deactivate(1);
+      await facade.deactivate(guest);
 
       expect(validateRequired.proccess).not.toHaveBeenCalled();
       expect(validateCPF.proccess).not.toHaveBeenCalled();
@@ -204,25 +207,36 @@ describe('GuestFacade', () => {
   });
 
   describe('findAll', () => {
-    it('should delegate to dao.findAll and return the results', async () => {
-      const filters: Partial<Guest> = { active: true };
+    it('should delegate to DAO and return the results', async () => {
+      const guest = makeGuest();
       const guests = [makeGuest()];
       dao.findAll.mockResolvedValue(guests);
 
-      const result = await facade.findAll(filters);
+      const result = await facade.findAll(guest);
 
-      expect(dao.findAll).toHaveBeenCalledWith(filters);
+      expect(dao.findAll).toHaveBeenCalledWith(guest);
       expect(result).toBe(guests);
     });
 
     it('should not run any validation strategy on findAll', async () => {
+      const guest = makeGuest();
       dao.findAll.mockResolvedValue([]);
 
-      await facade.findAll({});
+      await facade.findAll(guest);
 
       expect(validateRequired.proccess).not.toHaveBeenCalled();
       expect(validateCPF.proccess).not.toHaveBeenCalled();
       expect(validateEmail.proccess).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('entity type resolution', () => {
+    it('should throw when entity type has no registered DAO', async () => {
+      const unknownEntity = { id: 1, active: true };
+
+      await expect(facade.create(unknownEntity as Guest)).rejects.toThrow(
+        'No DAO registered for entity type: Object',
+      );
     });
   });
 });

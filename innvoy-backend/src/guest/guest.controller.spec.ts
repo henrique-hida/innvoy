@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GuestController } from './guest.controller';
-import { GuestFacade } from './guest.facade';
+import { Facade } from '../core/facade';
 import { Guest } from './domain/guest';
 
 const makeGuest = (): Guest => ({
@@ -26,14 +26,14 @@ const makeGuest = (): Guest => ({
 
 describe('GuestController', () => {
   let controller: GuestController;
-  let facade: jest.Mocked<GuestFacade>;
+  let facade: jest.Mocked<Facade>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GuestController],
       providers: [
         {
-          provide: GuestFacade,
+          provide: Facade,
           useValue: {
             create: jest.fn(),
             update: jest.fn(),
@@ -45,61 +45,73 @@ describe('GuestController', () => {
     }).compile();
 
     controller = module.get<GuestController>(GuestController);
-    facade = module.get(GuestFacade);
+    facade = module.get(Facade);
   });
 
   describe('create', () => {
-    it('should delegate to facade.create and return the created guest', async () => {
-      const guest = makeGuest();
-      facade.create.mockResolvedValue(guest);
+    it('should convert body to Guest instance and delegate to facade', async () => {
+      const body = makeGuest();
+      facade.create.mockResolvedValue(Object.assign(new Guest(), body));
 
-      const result = await controller.create(guest);
+      const result = await controller.create(body);
 
-      expect(facade.create).toHaveBeenCalledWith(guest);
-      expect(result).toBe(guest);
+      expect(facade.create).toHaveBeenCalledWith(expect.any(Guest));
+      expect(facade.create).toHaveBeenCalledWith(
+        expect.objectContaining({ fullName: body.fullName, cpf: body.cpf }),
+      );
+      expect(result.fullName).toBe(body.fullName);
     });
   });
 
   describe('update', () => {
-    it('should delegate to facade.update and return the updated guest', async () => {
-      const guest = makeGuest();
-      facade.update.mockResolvedValue(guest);
+    it('should convert body to Guest instance and delegate to facade', async () => {
+      const body = makeGuest();
+      facade.update.mockResolvedValue(Object.assign(new Guest(), body));
 
-      const result = await controller.update(guest);
+      const result = await controller.update(body);
 
-      expect(facade.update).toHaveBeenCalledWith(guest);
-      expect(result).toBe(guest);
+      expect(facade.update).toHaveBeenCalledWith(expect.any(Guest));
+      expect(facade.update).toHaveBeenCalledWith(
+        expect.objectContaining({ fullName: body.fullName }),
+      );
+      expect(result.fullName).toBe(body.fullName);
     });
   });
 
   describe('deactivate', () => {
-    it('should delegate to facade.deactivate with the guest id', async () => {
+    it('should create a Guest with the id and delegate to facade', async () => {
       facade.deactivate.mockResolvedValue(undefined);
 
       await controller.deactivate(1);
 
-      expect(facade.deactivate).toHaveBeenCalledWith(1);
+      expect(facade.deactivate).toHaveBeenCalledWith(expect.any(Guest));
+      expect(facade.deactivate).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 1 }),
+      );
     });
   });
 
   describe('findAll', () => {
-    it('should delegate to facade.findAll and return the list of guests', async () => {
+    it('should convert filters to Guest instance and delegate to facade', async () => {
       const filters: Partial<Guest> = { fullName: 'João', active: true };
-      const guests = [makeGuest()];
+      const guests = [Object.assign(new Guest(), makeGuest())];
       facade.findAll.mockResolvedValue(guests);
 
       const result = await controller.findAll(filters);
 
-      expect(facade.findAll).toHaveBeenCalledWith(filters);
+      expect(facade.findAll).toHaveBeenCalledWith(expect.any(Guest));
+      expect(facade.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({ fullName: 'João', active: true }),
+      );
       expect(result).toBe(guests);
     });
 
-    it('should call facade.findAll with empty filters when no filters provided', async () => {
+    it('should call facade.findAll with empty Guest when no filters provided', async () => {
       facade.findAll.mockResolvedValue([]);
 
       const result = await controller.findAll({});
 
-      expect(facade.findAll).toHaveBeenCalledWith({});
+      expect(facade.findAll).toHaveBeenCalledWith(expect.any(Guest));
       expect(result).toEqual([]);
     });
   });

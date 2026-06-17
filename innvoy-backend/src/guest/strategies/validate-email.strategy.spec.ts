@@ -1,8 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import { ValidateEmailStrategy } from './validate-email.strategy';
+import { GuestDAO } from '../guest.dao';
 import { Guest } from '../domain/guest';
 
-const makeGuest = (email: string): Guest => ({
+const makeGuest = (email: string, overrides: Partial<Guest> = {}): Guest => ({
   id: 1,
   fullName: 'João da Silva',
   cpf: '529.982.247-25',
@@ -21,13 +22,16 @@ const makeGuest = (email: string): Guest => ({
       state: { name: 'São Paulo', abbreviation: 'SP' },
     },
   },
+  ...overrides,
 });
 
 describe('ValidateEmailStrategy', () => {
   let strategy: ValidateEmailStrategy;
+  let dao: jest.Mocked<Pick<GuestDAO, 'findByEmail'>>;
 
   beforeEach(() => {
-    strategy = new ValidateEmailStrategy();
+    dao = { findByEmail: jest.fn().mockResolvedValue(null) };
+    strategy = new ValidateEmailStrategy(dao as unknown as GuestDAO);
   });
 
   describe('valid emails', () => {
@@ -91,6 +95,42 @@ describe('ValidateEmailStrategy', () => {
       await expect(
         strategy.proccess(makeGuest('joao silva@example.com')),
       ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('uniqueness validation', () => {
+    it('should throw when email already belongs to a different guest', async () => {
+      const existingGuest = makeGuest('joao@example.com', { id: 99 });
+      dao.findByEmail.mockResolvedValue(existingGuest);
+
+      const guest = makeGuest('joao@example.com', { id: 1 });
+      await expect(strategy.proccess(guest)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should pass when the found email belongs to the same guest (update scenario)', async () => {
+      const guest = makeGuest('joao@example.com', { id: 1 });
+      dao.findByEmail.mockResolvedValue(guest);
+
+      await expect(strategy.proccess(guest)).resolves.not.toThrow();
+    });
+
+    it('should throw when email is already in use and guest has no id (create scenario)', async () => {
+      const existingGuest = makeGuest('joao@example.com', { id: 5 });
+      dao.findByEmail.mockResolvedValue(existingGuest);
+
+      const newGuest = makeGuest('joao@example.com', { id: undefined });
+      await expect(strategy.proccess(newGuest)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should pass when email is not found in the database', async () => {
+      dao.findByEmail.mockResolvedValue(null);
+
+      const guest = makeGuest('joao@example.com', { id: undefined });
+      await expect(strategy.proccess(guest)).resolves.not.toThrow();
     });
   });
 });
