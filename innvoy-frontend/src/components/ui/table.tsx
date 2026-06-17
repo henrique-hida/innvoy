@@ -54,9 +54,7 @@ function TableCell({ className, ...props }: TdHTMLAttributes<HTMLTableCellElemen
 }
 
 function TableCaption({ className, ...props }: HTMLAttributes<HTMLTableCaptionElement>) {
-  return (
-    <caption className={cn('mt-4 text-sm text-muted-foreground', className)} {...props} />
-  );
+  return <caption className={cn('mt-4 text-sm text-muted-foreground', className)} {...props} />;
 }
 
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption };

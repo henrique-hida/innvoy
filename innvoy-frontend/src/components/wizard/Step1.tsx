@@ -41,11 +41,7 @@ export default function Step1({ fields, errors, isEditing, onChange, onNext }: P
 
         <div className="flex flex-col gap-4">
           <FormField id="fullName" label={t.fullNameField} error={errors.fullName}>
-            <Input
-              id="fullName"
-              value={fields.fullName}
-              onChange={handle('fullName')}
-            />
+            <Input id="fullName" value={fields.fullName} onChange={handle('fullName')} />
           </FormField>
 
           <FormField id="cpf" label={t.cpfField} error={errors.cpf}>
@@ -68,21 +64,11 @@ export default function Step1({ fields, errors, isEditing, onChange, onNext }: P
           </FormField>
 
           <FormField id="phone" label={t.phoneField} error={errors.phone}>
-            <Input
-              id="phone"
-              value={fields.phone}
-              onChange={handle('phone')}
-              inputMode="numeric"
-            />
+            <Input id="phone" value={fields.phone} onChange={handle('phone')} inputMode="numeric" />
           </FormField>
 
           <FormField id="email" label={t.emailField} error={errors.email}>
-            <Input
-              id="email"
-              type="email"
-              value={fields.email}
-              onChange={handle('email')}
-            />
+            <Input id="email" type="email" value={fields.email} onChange={handle('email')} />
           </FormField>
         </div>
       </fieldset>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
 import { guestsApi } from '../api/guests';
 import type { Guest } from '../types/guest';
 import { buttonVariants } from '@/components/ui/button';
@@ -59,14 +60,21 @@ function pageRange(current: number, total: number): (number | '...')[] {
 
 interface GuestRowProps {
   guest: Guest;
+  index: number;
   onEdit: (g: Guest) => void;
   onDeactivate: (id: number) => void;
 }
 
-function GuestRow({ guest: g, onEdit, onDeactivate }: GuestRowProps) {
+function GuestRow({ guest: g, index, onEdit, onDeactivate }: GuestRowProps) {
   const { t } = useLang();
   return (
-    <TableRow>
+    <motion.tr
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.25, delay: index * 0.04 }}
+      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+    >
       <TableCell>{g.fullName}</TableCell>
       <TableCell className="font-mono text-xs">{formatCPF(g.cpf)}</TableCell>
       <TableCell>{g.email}</TableCell>
@@ -89,7 +97,7 @@ function GuestRow({ guest: g, onEdit, onDeactivate }: GuestRowProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
-    </TableRow>
+    </motion.tr>
   );
 }
 
@@ -133,19 +141,37 @@ function renderBody(
   onDeactivate: (id: number) => void,
   t: Translations,
 ) {
-  if (loading) return <p className="py-4 text-muted-foreground">{t.loading}</p>;
+  if (loading)
+    return (
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="py-4 text-muted-foreground"
+      >
+        {t.loading}
+      </motion.p>
+    );
   if (error)
     return (
-      <p className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-2.5 text-sm text-destructive">
+      <motion.p
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-2.5 text-sm text-destructive"
+      >
         {error}
-      </p>
+      </motion.p>
     );
   if (guests.length === 0)
     return (
-      <div className="flex flex-col items-center gap-3 py-12 text-center">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-col items-center gap-3 py-12 text-center"
+      >
         <FrownIcon className="size-10 text-muted-foreground" aria-hidden="true" />
         <p className="text-muted-foreground">{t.noGuests}</p>
-      </div>
+      </motion.div>
     );
   return (
     <Table>
@@ -159,9 +185,11 @@ function renderBody(
         </TableRow>
       </TableHeader>
       <TableBody>
-        {guests.map((g) => (
-          <GuestRow key={g.id} guest={g} onEdit={onEdit} onDeactivate={onDeactivate} />
-        ))}
+        <AnimatePresence>
+          {guests.map((g, i) => (
+            <GuestRow key={g.id} guest={g} index={i} onEdit={onEdit} onDeactivate={onDeactivate} />
+          ))}
+        </AnimatePresence>
       </TableBody>
     </Table>
   );
@@ -218,7 +246,12 @@ export default function GuestList() {
   const displayed = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="py-8">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="py-8"
+    >
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-medium tracking-tight">{t.guests}</h2>
         <Link to="/guests/new" className={buttonVariants()}>
@@ -236,6 +269,6 @@ export default function GuestList() {
       </div>
       {renderBody(displayed, guests === null, error, handleEdit, handleDeactivate, t)}
       {totalPages > 1 && <PaginationBar page={page} total={totalPages} onPageChange={setPage} />}
-    </div>
+    </motion.div>
   );
 }

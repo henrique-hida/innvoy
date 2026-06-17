@@ -32,7 +32,7 @@ function parseCityOption(val: string): { name: string; uf: string } | null {
 
 function resolveStateName(uf: string, municipalities: Municipality[]): string {
   const m = findByUf(uf, municipalities);
-  return m ? m.estado : UF_TO_STATE[uf] ?? '';
+  return m ? m.estado : (UF_TO_STATE[uf] ?? '');
 }
 
 function applyCity(

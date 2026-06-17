@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 
@@ -17,7 +18,19 @@ export function FormField({ id, label, error, className, children }: Props) {
         {label}
       </Label>
       {children}
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden text-xs text-destructive"
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

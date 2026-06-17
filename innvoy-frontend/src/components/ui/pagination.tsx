@@ -29,7 +29,10 @@ function PaginationLink({ className, isActive, ...props }: PaginationLinkProps) 
   return (
     <button
       aria-current={isActive ? 'page' : undefined}
-      className={cn(buttonVariants({ variant: isActive ? 'outline' : 'ghost', size: 'icon' }), className)}
+      className={cn(
+        buttonVariants({ variant: isActive ? 'outline' : 'ghost', size: 'icon' }),
+        className,
+      )}
       {...props}
     />
   );

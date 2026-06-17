@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import type { Guest } from '../types/guest';
 import { toFormState, toGuest, type FormState, STEP1_KEYS, STEP2_KEYS } from './wizard/formState';
 import { useLang } from '@/i18n/context';
@@ -10,6 +11,24 @@ type FieldErrors = Record<string, string>;
 
 function hasErrors(errs: FieldErrors): boolean {
   return Object.values(errs).some(Boolean);
+}
+
+const STEP1_FIELDS = new Set<string>(STEP1_KEYS);
+
+const BACKEND_FIELD_MAP: Record<string, keyof FormState> = {
+  cpf: 'cpf',
+  email: 'email',
+  fullname: 'fullName',
+  phone: 'phone',
+  dateofbirth: 'dateOfBirth',
+};
+
+function detectBackendField(message: string): keyof FormState | null {
+  const lower = message.toLowerCase();
+  for (const [keyword, field] of Object.entries(BACKEND_FIELD_MAP)) {
+    if (lower.includes(keyword)) return field;
+  }
+  return null;
 }
 
 interface Props {
@@ -36,6 +55,19 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
     setStep(2);
   };
 
+  const handleBackendError = (message: string) => {
+    const field = detectBackendField(message);
+    if (field && STEP1_FIELDS.has(field)) {
+      setStep1Errors({ [field]: message });
+      setStep2Errors({});
+      setStep(1);
+    } else if (field) {
+      setStep2Errors({ [field]: message });
+    } else {
+      setSubmitError(message);
+    }
+  };
+
   const handleSubmit = () => {
     const errs = validateFirstError(form, STEP2_KEYS, t);
     setStep2Errors(errs);
@@ -44,7 +76,8 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
     setSubmitError('');
     onSubmit(toGuest(form, initial))
       .catch((err: unknown) => {
-        setSubmitError(err instanceof Error ? err.message : t.unexpectedError);
+        const message = err instanceof Error ? err.message : t.unexpectedError;
+        handleBackendError(message);
       })
       .finally(() => setSubmitting(false));
   };
@@ -65,33 +98,58 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
 
   return (
     <form className="mx-auto max-w-xl" onSubmit={(e) => e.preventDefault()}>
-      {submitError && (
-        <p className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 px-4 py-2.5 text-sm text-destructive">
-          {submitError}
-        </p>
-      )}
-      {step === 1 ? (
-        <Step1
-          fields={form}
-          errors={step1Errors}
-          isEditing={!!initial}
-          onChange={(f) => setForm((prev) => ({ ...prev, ...f }))}
-          onNext={handleNext}
-        />
-      ) : (
-        <Step2
-          fields={form}
-          errors={step2Errors}
-          onChange={(f) => setForm((prev) => ({ ...prev, ...f }))}
-          onBack={() => setStep(1)}
-          onSubmit={handleSubmit}
-          onDeactivate={deactivateProp}
-          submitLabel={submitLabel}
-          submitting={submitting}
-          deactivating={deactivating}
-          isActive={isActive}
-        />
-      )}
+      <AnimatePresence>
+        {submitError && (
+          <motion.p
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 px-4 py-2.5 text-sm text-destructive"
+          >
+            {submitError}
+          </motion.p>
+        )}
+      </AnimatePresence>
+      <AnimatePresence mode="wait" initial={false}>
+        {step === 1 ? (
+          <motion.div
+            key="step1"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.25 }}
+          >
+            <Step1
+              fields={form}
+              errors={step1Errors}
+              isEditing={!!initial}
+              onChange={(f) => setForm((prev) => ({ ...prev, ...f }))}
+              onNext={handleNext}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="step2"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ duration: 0.25 }}
+          >
+            <Step2
+              fields={form}
+              errors={step2Errors}
+              onChange={(f) => setForm((prev) => ({ ...prev, ...f }))}
+              onBack={() => setStep(1)}
+              onSubmit={handleSubmit}
+              onDeactivate={deactivateProp}
+              submitLabel={submitLabel}
+              submitting={submitting}
+              deactivating={deactivating}
+              isActive={isActive}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </form>
   );
 }

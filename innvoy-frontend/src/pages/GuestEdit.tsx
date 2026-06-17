@@ -1,4 +1,5 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import GuestForm from '../components/GuestForm';
 import { guestsApi } from '../api/guests';
 import type { Guest } from '../types/guest';
@@ -27,7 +28,12 @@ export default function GuestEdit() {
   };
 
   return (
-    <div className="py-8 mx-auto max-w-xl">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="mx-auto max-w-xl py-8"
+    >
       <Link
         to="/guests"
         className="mb-5 inline-flex items-center gap-1 text-sm text-primary hover:opacity-80"
@@ -44,6 +50,6 @@ export default function GuestEdit() {
         onDeactivate={guest.active ? handleDeactivate : undefined}
         submitLabel={t.saveChanges}
       />
-    </div>
+    </motion.div>
   );
 }
