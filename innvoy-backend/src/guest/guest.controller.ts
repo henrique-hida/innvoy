@@ -11,27 +11,33 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { GuestFacade } from './guest.facade';
+import { Facade } from '../core/facade';
 import { Guest } from './domain/guest';
 
 @Controller('guests')
 export class GuestController {
-  constructor(private readonly facade: GuestFacade) {}
+  constructor(private readonly facade: Facade) {}
 
   @Post()
-  async create(@Body() guest: Guest): Promise<Guest> {
-    return this.facade.create(guest);
+  async create(@Body() body: Guest): Promise<Guest> {
+    const guest = Object.assign(new Guest(), body);
+    const result = await this.facade.create(guest);
+    return result as Guest;
   }
 
   @Put()
-  async update(@Body() guest: Guest): Promise<Guest> {
-    return this.facade.update(guest);
+  async update(@Body() body: Guest): Promise<Guest> {
+    const guest = Object.assign(new Guest(), body);
+    const result = await this.facade.update(guest);
+    return result as Guest;
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deactivate(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.facade.deactivate(id);
+    const guest = new Guest();
+    guest.id = id;
+    return this.facade.deactivate(guest);
   }
 
   @Get()
@@ -39,6 +45,8 @@ export class GuestController {
     if (filters.active !== undefined) {
       filters.active = String(filters.active) === 'true';
     }
-    return this.facade.findAll(filters);
+    const guest = Object.assign(new Guest(), filters);
+    const results = await this.facade.findAll(guest);
+    return results as Guest[];
   }
 }

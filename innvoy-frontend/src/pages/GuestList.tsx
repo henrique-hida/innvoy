@@ -32,6 +32,8 @@ import {
 } from '@/components/ui/pagination';
 import { MoreHorizontalIcon, PlusIcon } from 'lucide-react';
 import { EmptyBed } from '@/components/EmptyBed';
+import { GuestDetailModal } from '@/components/GuestDetailModal';
+import { ConfirmDeactivateDialog } from '@/components/ConfirmDeactivateDialog';
 import { useLang } from '@/i18n/context';
 import type { Translations } from '@/i18n/translations';
 
@@ -59,9 +61,10 @@ interface GuestRowProps {
   index: number;
   onEdit: (g: Guest) => void;
   onDeactivate: (id: number) => void;
+  onClick: (g: Guest) => void;
 }
 
-function GuestRow({ guest: g, index, onEdit, onDeactivate }: GuestRowProps) {
+function GuestRow({ guest: g, index, onEdit, onDeactivate, onClick }: GuestRowProps) {
   const { t } = useLang();
   return (
     <motion.tr
@@ -69,13 +72,14 @@ function GuestRow({ guest: g, index, onEdit, onDeactivate }: GuestRowProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.25, delay: index * 0.04 }}
-      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+      className="cursor-pointer border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+      onClick={() => onClick(g)}
     >
       <TableCell>{g.fullName}</TableCell>
       <TableCell className="font-mono text-xs">{formatCPF(g.cpf)}</TableCell>
       <TableCell>{g.email}</TableCell>
       <TableCell>{formatPhone(g.phone)}</TableCell>
-      <TableCell>
+      <TableCell onClick={(e) => e.stopPropagation()}>
         <DropdownMenu>
           <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <MoreHorizontalIcon className="h-4 w-4" />
@@ -135,6 +139,7 @@ function renderBody(
   error: string,
   onEdit: (g: Guest) => void,
   onDeactivate: (id: number) => void,
+  onClick: (g: Guest) => void,
   t: Translations,
 ) {
   if (loading)
@@ -200,7 +205,14 @@ function renderBody(
       <TableBody>
         <AnimatePresence>
           {guests.map((g, i) => (
-            <GuestRow key={g.id} guest={g} index={i} onEdit={onEdit} onDeactivate={onDeactivate} />
+            <GuestRow
+              key={g.id}
+              guest={g}
+              index={i}
+              onEdit={onEdit}
+              onDeactivate={onDeactivate}
+              onClick={onClick}
+            />
           ))}
         </AnimatePresence>
       </TableBody>
@@ -214,6 +226,10 @@ export default function GuestList() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [error, setError] = useState('');
+  const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deactivateId, setDeactivateId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const loadGuests = (term = '') => {
@@ -243,15 +259,25 @@ export default function GuestList() {
     void navigate(`/guests/${guest.id}/edit`, { state: { guest } });
   };
 
+  const handleRowClick = (guest: Guest) => {
+    setSelectedGuest(guest);
+    setDetailOpen(true);
+  };
+
   const handleSearch = (value: string) => {
     setSearch(value);
     setPage(1);
   };
 
   const handleDeactivate = (id: number) => {
-    if (!window.confirm(t.deactivateConfirm)) return;
+    setDeactivateId(id);
+    setConfirmOpen(true);
+  };
+
+  const confirmDeactivate = () => {
+    if (deactivateId === null) return;
     void guestsApi
-      .deactivate(id)
+      .deactivate(deactivateId)
       .then(() => guestsApi.findAll({ active: true }))
       .then((data) => {
         setGuests(data);
@@ -288,8 +314,28 @@ export default function GuestList() {
           {t.newGuest}
         </Link>
       </div>
-      {renderBody(displayed, guests === null, error, handleEdit, handleDeactivate, t)}
+      {renderBody(
+        displayed,
+        guests === null,
+        error,
+        handleEdit,
+        handleDeactivate,
+        handleRowClick,
+        t,
+      )}
       {totalPages > 1 && <PaginationBar page={page} total={totalPages} onPageChange={setPage} />}
+      <GuestDetailModal
+        guest={selectedGuest}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onEdit={handleEdit}
+        onDeactivate={handleDeactivate}
+      />
+      <ConfirmDeactivateDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        onConfirm={confirmDeactivate}
+      />
     </motion.div>
   );
 }

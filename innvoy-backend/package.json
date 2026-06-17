@@ -73,7 +73,8 @@
       "**/*.(t|j)s",
       "!**/*.module.ts",
       "!**/main.ts",
-      "!**/domain/**"
+      "!**/domain/**",
+      "!**/*-seed.controller.ts"
     ],
     "coverageDirectory": "../coverage",
     "coverageThreshold": {

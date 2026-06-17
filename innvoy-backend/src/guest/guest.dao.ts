@@ -49,4 +49,8 @@ export class GuestDAO implements IDAO {
   async findByCPF(cpf: string): Promise<Guest | null> {
     return this.repo.findOneBy({ cpf });
   }
+
+  async findByEmail(email: string): Promise<Guest | null> {
+    return this.repo.findOneBy({ email });
+  }
 }

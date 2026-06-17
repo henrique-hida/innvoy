@@ -5,6 +5,7 @@ import { toFormState, toGuest, type FormState, STEP1_KEYS, STEP2_KEYS } from './
 import { useLang } from '@/i18n/context';
 import type { Translations } from '@/i18n/translations';
 import { validateFirstError } from '@/lib/validation';
+import { ConfirmDeactivateDialog } from './ConfirmDeactivateDialog';
 import { Stepper } from './wizard/Stepper';
 import Step1 from './wizard/Step1';
 import Step2 from './wizard/Step2';
@@ -55,6 +56,7 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [deactivating, setDeactivating] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleNext = () => {
     const errs = validateFirstError(form, STEP1_KEYS, t);
@@ -93,8 +95,12 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
       .finally(() => setSubmitting(false));
   };
 
-  const handleDeactivate = async () => {
-    if (!onDeactivate || !window.confirm(t.deactivateConfirm)) return;
+  const handleDeactivateClick = () => {
+    setConfirmOpen(true);
+  };
+
+  const handleDeactivateConfirm = async () => {
+    if (!onDeactivate) return;
     setDeactivating(true);
     try {
       await onDeactivate();
@@ -105,7 +111,7 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
   };
 
   const isActive = initial ? initial.active : true;
-  const deactivateProp = onDeactivate ? handleDeactivate : undefined;
+  const deactivateProp = onDeactivate ? handleDeactivateClick : undefined;
 
   return (
     <form className="mx-auto max-w-xl" onSubmit={(e) => e.preventDefault()}>
@@ -162,6 +168,11 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
           </motion.div>
         )}
       </AnimatePresence>
+      <ConfirmDeactivateDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        onConfirm={() => void handleDeactivateConfirm()}
+      />
     </form>
   );
 }

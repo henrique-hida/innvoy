@@ -44,7 +44,10 @@ const en = {
   saveChanges: 'Save changes',
 
   // form
-  deactivateConfirm: 'Deactivate this guest? This cannot be undone.',
+  cancel: 'Cancel',
+  deactivateConfirmTitle: 'Deactivate guest',
+  deactivateConfirm:
+    'Are you sure you want to deactivate this guest? This action cannot be undone.',
 
   // wizard
   step1Label: 'Personal info',
@@ -73,6 +76,21 @@ const en = {
   deactivateGuest: 'Deactivate guest',
   deactivating: 'Deactivating…',
   saving: 'Saving…',
+
+  // guest detail modal
+  guestDetails: 'Guest details',
+  personalInfo: 'Personal information',
+  address: 'Address',
+  dateOfBirth: 'Date of birth',
+  close: 'Close',
+  deactivate: 'Deactivate',
+  street: 'Street',
+  number: 'Number',
+  complement: 'Complement',
+  neighborhood: 'Neighborhood',
+  city: 'City',
+  state: 'State',
+  zipCode: 'ZIP code',
 
   // toasts
   guestCreated: 'Guest created successfully',
@@ -127,7 +145,10 @@ const pt: typeof en = {
   createGuest: 'Cadastrar hóspede',
   saveChanges: 'Salvar alterações',
 
-  deactivateConfirm: 'Desativar este hóspede? Esta ação não pode ser desfeita.',
+  cancel: 'Cancelar',
+  deactivateConfirmTitle: 'Desativar hóspede',
+  deactivateConfirm:
+    'Tem certeza que deseja desativar este hóspede? Esta ação não pode ser desfeita.',
 
   step1Label: 'Dados pessoais',
   step2Label: 'Endereço',
@@ -153,6 +174,20 @@ const pt: typeof en = {
   deactivateGuest: 'Desativar hóspede',
   deactivating: 'Desativando…',
   saving: 'Salvando…',
+
+  guestDetails: 'Detalhes do hóspede',
+  personalInfo: 'Dados pessoais',
+  address: 'Endereço',
+  dateOfBirth: 'Data de nascimento',
+  close: 'Fechar',
+  deactivate: 'Desativar',
+  street: 'Logradouro',
+  number: 'Número',
+  complement: 'Complemento',
+  neighborhood: 'Bairro',
+  city: 'Cidade',
+  state: 'Estado',
+  zipCode: 'CEP',
 
   guestCreated: 'Hóspede cadastrado com sucesso',
   guestUpdated: 'Hóspede atualizado com sucesso',
@@ -206,7 +241,10 @@ const es: typeof en = {
   createGuest: 'Registrar huésped',
   saveChanges: 'Guardar cambios',
 
-  deactivateConfirm: '¿Desactivar este huésped? Esta acción no se puede deshacer.',
+  cancel: 'Cancelar',
+  deactivateConfirmTitle: 'Desactivar huésped',
+  deactivateConfirm:
+    '¿Está seguro de que desea desactivar este huésped? Esta acción no se puede deshacer.',
 
   step1Label: 'Datos personales',
   step2Label: 'Dirección',
@@ -232,6 +270,20 @@ const es: typeof en = {
   deactivateGuest: 'Desactivar huésped',
   deactivating: 'Desactivando…',
   saving: 'Guardando…',
+
+  guestDetails: 'Detalles del huésped',
+  personalInfo: 'Información personal',
+  address: 'Dirección',
+  dateOfBirth: 'Fecha de nacimiento',
+  close: 'Cerrar',
+  deactivate: 'Desactivar',
+  street: 'Calle',
+  number: 'Número',
+  complement: 'Complemento',
+  neighborhood: 'Barrio',
+  city: 'Ciudad',
+  state: 'Estado',
+  zipCode: 'Código postal',
 
   guestCreated: 'Huésped registrado exitosamente',
   guestUpdated: 'Huésped actualizado exitosamente',
