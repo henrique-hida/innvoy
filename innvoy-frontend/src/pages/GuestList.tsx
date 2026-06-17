@@ -5,8 +5,21 @@ import type { Guest } from '../types/guest';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,11 +76,6 @@ function applySearch(list: Guest[], search: string): Guest[] {
 function filterByStatus(list: Guest[], status: Status): Guest[] {
   if (status === 'all') return list;
   return list.filter((g) => g.active === (status === 'active'));
-}
-
-function deactivateInList(prev: Guest[] | null, id: number): Guest[] | null {
-  if (!prev) return null;
-  return prev.map((g) => (g.id === id ? { ...g, active: false } : g));
 }
 
 function pageRange(current: number, total: number): (number | '...')[] {
@@ -163,7 +171,7 @@ function PaginationBar({ page, total, onPageChange }: PaginationBarProps) {
             {p === '...' ? (
               <PaginationEllipsis />
             ) : (
-              <PaginationLink isActive={p === page} onClick={() => onPageChange(p as number)}>
+              <PaginationLink isActive={p === page} onClick={() => onPageChange(p)}>
                 {p}
               </PaginationLink>
             )}
@@ -267,9 +275,13 @@ export default function GuestList() {
 
   const handleDeactivate = (id: number) => {
     if (!window.confirm(t.deactivateConfirm)) return;
-    void guestsApi.deactivate(id).then(() => {
-      setGuests((prev) => deactivateInList(prev, id));
-    });
+    void guestsApi
+      .deactivate(id)
+      .then(() => guestsApi.findAll({}))
+      .then((data) => setGuests(data))
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : 'Failed to deactivate guest');
+      });
   };
 
   const byStatus = filterByStatus(guests ?? [], status);
@@ -294,10 +306,17 @@ export default function GuestList() {
           className="max-w-sm"
         />
       </div>
-      {renderBody(displayed, guests === null, error, status, handleStatus, handleEdit, handleDeactivate, t)}
-      {totalPages > 1 && (
-        <PaginationBar page={page} total={totalPages} onPageChange={setPage} />
+      {renderBody(
+        displayed,
+        guests === null,
+        error,
+        status,
+        handleStatus,
+        handleEdit,
+        handleDeactivate,
+        t,
       )}
+      {totalPages > 1 && <PaginationBar page={page} total={totalPages} onPageChange={setPage} />}
     </div>
   );
 }
