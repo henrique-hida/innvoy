@@ -37,6 +37,13 @@ import type { Translations } from '@/i18n/translations';
 const formatCPF = (cpf: string) =>
   /^\d{11}$/.test(cpf) ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : cpf;
 
+const formatPhone = (phone: string) => {
+  const d = phone.replace(/\D/g, '');
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return phone;
+};
+
 const PAGE_SIZE = 10;
 
 function matchesSearch(g: Guest, q: string): boolean {
@@ -79,7 +86,7 @@ function GuestRow({ guest: g, index, onEdit, onDeactivate }: GuestRowProps) {
       <TableCell>{g.fullName}</TableCell>
       <TableCell className="font-mono text-xs">{formatCPF(g.cpf)}</TableCell>
       <TableCell>{g.email}</TableCell>
-      <TableCell>{g.phone}</TableCell>
+      <TableCell>{formatPhone(g.phone)}</TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
