@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import type { Guest } from '../types/guest';
 import { toFormState, toGuest, type FormState, STEP1_KEYS, STEP2_KEYS } from './wizard/formState';
 import { useLang } from '@/i18n/context';
+import type { Translations } from '@/i18n/translations';
 import { validateFirstError } from '@/lib/validation';
 import Step1 from './wizard/Step1';
 import Step2 from './wizard/Step2';
@@ -15,20 +16,26 @@ function hasErrors(errs: FieldErrors): boolean {
 
 const STEP1_FIELDS = new Set<string>(STEP1_KEYS);
 
-const BACKEND_FIELD_MAP: Record<string, keyof FormState> = {
-  cpf: 'cpf',
-  email: 'email',
-  fullname: 'fullName',
-  phone: 'phone',
-  dateofbirth: 'dateOfBirth',
-};
+interface BackendError {
+  field: keyof FormState;
+  translationKey: keyof Translations;
+}
 
-function detectBackendField(message: string): keyof FormState | null {
+const BACKEND_ERRORS: { pattern: string; error: BackendError }[] = [
+  { pattern: 'cpf already', error: { field: 'cpf', translationKey: 'cpfAlreadyRegistered' } },
+  { pattern: 'invalid cpf', error: { field: 'cpf', translationKey: 'invalidCpf' } },
+  { pattern: 'invalid email', error: { field: 'email', translationKey: 'invalidEmailFormat' } },
+  { pattern: "'fullname'", error: { field: 'fullName', translationKey: 'requiredField' } },
+  { pattern: "'phone'", error: { field: 'phone', translationKey: 'requiredField' } },
+  { pattern: "'dateofbirth'", error: { field: 'dateOfBirth', translationKey: 'requiredField' } },
+  { pattern: "'email'", error: { field: 'email', translationKey: 'requiredField' } },
+  { pattern: "'cpf'", error: { field: 'cpf', translationKey: 'requiredField' } },
+];
+
+function detectBackendError(message: string): BackendError | null {
   const lower = message.toLowerCase();
-  for (const [keyword, field] of Object.entries(BACKEND_FIELD_MAP)) {
-    if (lower.includes(keyword)) return field;
-  }
-  return null;
+  const match = BACKEND_ERRORS.find((e) => lower.includes(e.pattern));
+  return match ? match.error : null;
 }
 
 interface Props {
@@ -56,15 +63,18 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
   };
 
   const handleBackendError = (message: string) => {
-    const field = detectBackendField(message);
-    if (field && STEP1_FIELDS.has(field)) {
-      setStep1Errors({ [field]: message });
+    const detected = detectBackendError(message);
+    if (!detected) {
+      setSubmitError(message);
+      return;
+    }
+    const translated = t[detected.translationKey];
+    if (STEP1_FIELDS.has(detected.field)) {
+      setStep1Errors({ [detected.field]: translated });
       setStep2Errors({});
       setStep(1);
-    } else if (field) {
-      setStep2Errors({ [field]: message });
     } else {
-      setSubmitError(message);
+      setStep2Errors({ [detected.field]: translated });
     }
   };
 
