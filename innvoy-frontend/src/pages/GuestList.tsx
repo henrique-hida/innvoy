@@ -179,8 +179,7 @@ function renderBody(
                 className="flex flex-col items-center gap-2 py-10"
               >
                 <EmptyBed />
-                <p className="text-sm font-medium text-muted-foreground">{t.noGuests}</p>
-                <p className="text-xs text-muted-foreground/60">{t.noGuestsHint}</p>
+                <p className="text-sm text-muted-foreground">{t.noGuests}</p>
               </motion.div>
             </TableCell>
           </tr>
