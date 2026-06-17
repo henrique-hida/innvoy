@@ -3,14 +3,20 @@ import { cn } from '@/lib/utils';
 
 function Table({ className, ...props }: HTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="relative w-full overflow-x-auto">
+    <div className="relative w-full overflow-x-auto rounded-xl border border-border">
       <table className={cn('w-full caption-bottom text-sm', className)} {...props} />
     </div>
   );
 }
 
 function TableHeader({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn('bg-muted/40 [&_tr]:border-b', className)} {...props} />;
+  return (
+    <thead
+      className={cn('[&_tr]:border-b', className)}
+      style={{ backgroundColor: 'rgba(51, 53, 100, 0.08)' }}
+      {...props}
+    />
+  );
 }
 
 function TableBody({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) {
