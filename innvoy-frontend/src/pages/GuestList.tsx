@@ -176,7 +176,7 @@ function renderBody(
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4 }}
-                className="flex flex-col items-center gap-2 py-10"
+                className="flex flex-col items-center gap-2 py-6"
               >
                 <EmptyBed />
                 <p className="text-sm text-muted-foreground">{t.noGuests}</p>
