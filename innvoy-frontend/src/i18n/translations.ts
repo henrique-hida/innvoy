@@ -1,4 +1,4 @@
-export type Lang = 'en' | 'pt';
+export type Lang = 'en' | 'pt' | 'es';
 
 const en = {
   // common
@@ -149,5 +149,75 @@ const pt: typeof en = {
   guestDeactivated: 'Hóspede desativado com sucesso',
 };
 
-export const translations = { en, pt };
+const es: typeof en = {
+  backToGuests: '← Volver a huéspedes',
+  requiredField: 'Campo obligatorio',
+  unexpectedError: 'Error inesperado',
+  invalidCpf: 'CPF inválido',
+  invalidEmail: 'Correo electrónico inválido',
+  invalidPhone: 'Teléfono debe tener 10 u 11 dígitos',
+  invalidDate: 'Fecha inválida',
+  futureDateOfBirth: 'La fecha de nacimiento no puede ser en el futuro',
+  invalidZipCode: 'Código postal debe tener 8 dígitos',
+  fullNameTooShort: 'Ingrese nombre y apellido',
+  fullNameInvalid: 'El nombre debe contener solo letras',
+  cpfAlreadyRegistered: 'CPF ya registrado',
+  invalidEmailFormat: 'Formato de correo electrónico inválido',
+
+  all: 'Todos',
+  active: 'Activo',
+  inactive: 'Inactivo',
+
+  searchPlaceholder: 'Buscar por nombre, CPF, teléfono o correo…',
+  statusLabel: 'Estado',
+  guests: 'Huéspedes',
+  newGuest: 'Nuevo huésped',
+  statusFilter: 'Estado:',
+  fullName: 'Nombre completo',
+  cpf: 'CPF',
+  email: 'Correo electrónico',
+  phone: 'Teléfono',
+  status: 'Estado',
+  edit: 'Editar',
+  loading: 'Cargando…',
+  noGuests: 'No se encontraron huéspedes.',
+
+  newGuestTitle: 'Nuevo huésped',
+  editGuestTitle: 'Editar huésped',
+  createGuest: 'Registrar huésped',
+  saveChanges: 'Guardar cambios',
+
+  deactivateConfirm: '¿Desactivar este huésped? Esta acción no se puede deshacer.',
+
+  step1Label: 'Datos personales',
+  step2Label: 'Dirección',
+  personalInfoLegend: 'Datos personales',
+  addressLegend: 'Dirección',
+
+  fullNameField: 'Nombre completo',
+  cpfField: 'CPF',
+  dateOfBirthField: 'Fecha de nacimiento',
+  phoneField: 'Teléfono',
+  emailField: 'Correo electrónico',
+  nextStep: 'Siguiente',
+
+  zipCodeField: 'Código postal',
+  zipCodeLooking: 'Código postal (buscando…)',
+  streetField: 'Calle',
+  numberField: 'Número',
+  complementField: 'Complemento',
+  neighborhoodField: 'Barrio',
+  cityField: 'Ciudad',
+  cityLoading: 'Ciudad (cargando…)',
+  backStep: '← Volver',
+  deactivateGuest: 'Desactivar huésped',
+  deactivating: 'Desactivando…',
+  saving: 'Guardando…',
+
+  guestCreated: 'Huésped registrado exitosamente',
+  guestUpdated: 'Huésped actualizado exitosamente',
+  guestDeactivated: 'Huésped desactivado exitosamente',
+};
+
+export const translations = { en, pt, es };
 export type Translations = typeof en;

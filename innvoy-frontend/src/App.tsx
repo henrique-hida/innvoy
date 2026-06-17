@@ -4,18 +4,42 @@ import GuestList from './pages/GuestList';
 import GuestCreate from './pages/GuestCreate';
 import GuestEdit from './pages/GuestEdit';
 import imagotipo from './assets/imagotipo_white.svg';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './components/ui/dropdown-menu';
+import { GlobeIcon } from 'lucide-react';
 import { LangProvider, useLang } from './i18n/context';
+import type { Lang } from './i18n/translations';
+
+const LANG_LABELS: Record<Lang, string> = {
+  pt: 'Português',
+  en: 'English',
+  es: 'Español',
+};
 
 function LangToggle() {
   const { lang, setLang } = useLang();
-  const next: typeof lang = lang === 'en' ? 'pt' : 'en';
   return (
-    <button
-      onClick={() => setLang(next)}
-      className="rounded-md px-2.5 py-1 text-xs font-medium text-white ring-1 ring-white/30 hover:bg-white/10"
-    >
-      {next.toUpperCase()}
-    </button>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-white ring-1 ring-white/30 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-white/50">
+        <GlobeIcon className="h-3.5 w-3.5" />
+        {lang.toUpperCase()}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {(Object.keys(LANG_LABELS) as Lang[]).map((l) => (
+          <DropdownMenuItem
+            key={l}
+            onClick={() => setLang(l)}
+            className={l === lang ? 'font-semibold' : ''}
+          >
+            {LANG_LABELS[l]}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
