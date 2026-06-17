@@ -261,20 +261,20 @@ export default function GuestList() {
       transition={{ duration: 0.35 }}
       className="py-8"
     >
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-extrabold tracking-tight text-[rgb(51,53,100)]">{t.guests}</h2>
-        <Link to="/guests/new" className={buttonVariants()}>
-          <PlusIcon />
-          {t.newGuest}
-        </Link>
-      </div>
-      <div className="mb-5">
+      <h2 className="mb-4 text-2xl font-extrabold tracking-tight text-[rgb(51,53,100)]">
+        {t.guests}
+      </h2>
+      <div className="mb-5 flex items-center justify-between gap-4">
         <Input
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
           placeholder={t.searchPlaceholder}
           className="max-w-sm"
         />
+        <Link to="/guests/new" className={buttonVariants()}>
+          <PlusIcon />
+          {t.newGuest}
+        </Link>
       </div>
       {renderBody(displayed, guests === null, error, handleEdit, handleDeactivate, t)}
       {totalPages > 1 && <PaginationBar page={page} total={totalPages} onPageChange={setPage} />}
