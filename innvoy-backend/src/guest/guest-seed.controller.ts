@@ -273,7 +273,7 @@ export class GuestSeedController {
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
   async clear(): Promise<void> {
-    await this.addressRepo.delete({});
-    await this.guestRepo.delete({});
+    await this.addressRepo.createQueryBuilder().delete().execute();
+    await this.guestRepo.createQueryBuilder().delete().execute();
   }
 }
