@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import GuestList from './pages/GuestList';
 import GuestCreate from './pages/GuestCreate';
 import GuestEdit from './pages/GuestEdit';
@@ -47,6 +48,7 @@ export default function App() {
     <BrowserRouter>
       <LangProvider>
         <Shell />
+        <Toaster position="bottom-right" richColors closeButton />
       </LangProvider>
     </BrowserRouter>
   );

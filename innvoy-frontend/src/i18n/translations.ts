@@ -72,6 +72,11 @@ const en = {
   deactivateGuest: 'Deactivate guest',
   deactivating: 'Deactivating…',
   saving: 'Saving…',
+
+  // toasts
+  guestCreated: 'Guest created successfully',
+  guestUpdated: 'Guest updated successfully',
+  guestDeactivated: 'Guest deactivated successfully',
 };
 
 const pt: typeof en = {
@@ -138,6 +143,10 @@ const pt: typeof en = {
   deactivateGuest: 'Desativar hóspede',
   deactivating: 'Desativando…',
   saving: 'Salvando…',
+
+  guestCreated: 'Hóspede cadastrado com sucesso',
+  guestUpdated: 'Hóspede atualizado com sucesso',
+  guestDeactivated: 'Hóspede desativado com sucesso',
 };
 
 export const translations = { en, pt };

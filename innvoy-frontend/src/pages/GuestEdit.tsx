@@ -1,5 +1,6 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { toast } from 'sonner';
 import GuestForm from '../components/GuestForm';
 import { guestsApi } from '../api/guests';
 import type { Guest } from '../types/guest';
@@ -19,11 +20,13 @@ export default function GuestEdit() {
 
   const handleSubmit = async (updated: Guest) => {
     await guestsApi.update(updated);
+    toast.success(t.guestUpdated);
     void navigate('/guests');
   };
 
   const handleDeactivate = async () => {
     await guestsApi.deactivate(guest.id!);
+    toast.success(t.guestDeactivated);
     void navigate('/guests');
   };
 

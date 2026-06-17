@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
+import { toast } from 'sonner';
 import { guestsApi } from '../api/guests';
 import type { Guest } from '../types/guest';
 import { buttonVariants } from '@/components/ui/button';
@@ -235,7 +236,10 @@ export default function GuestList() {
     void guestsApi
       .deactivate(id)
       .then(() => guestsApi.findAll({ active: true }))
-      .then((data) => setGuests(data))
+      .then((data) => {
+        setGuests(data);
+        toast.success(t.guestDeactivated);
+      })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : 'Failed to deactivate guest');
       });
