@@ -5,6 +5,13 @@ const en = {
   backToGuests: '← Back to guests',
   requiredField: 'Required field',
   unexpectedError: 'Unexpected error',
+  invalidCpf: 'Invalid CPF',
+  invalidEmail: 'Invalid email',
+  invalidPhone: 'Phone must have 10 or 11 digits',
+  invalidDate: 'Invalid date',
+  futureDateOfBirth: 'Date of birth cannot be in the future',
+  invalidZipCode: 'ZIP code must have 8 digits',
+  fullNameTooShort: 'Enter first and last name',
 
   // status
   all: 'All',
@@ -25,7 +32,6 @@ const en = {
   edit: 'Edit',
   loading: 'Loading…',
   noGuests: 'No guests found.',
-
 
   // pages
   newGuestTitle: 'New guest',
@@ -69,6 +75,13 @@ const pt: typeof en = {
   backToGuests: '← Voltar para hóspedes',
   requiredField: 'Campo obrigatório',
   unexpectedError: 'Erro inesperado',
+  invalidCpf: 'CPF inválido',
+  invalidEmail: 'E-mail inválido',
+  invalidPhone: 'Telefone deve ter 10 ou 11 dígitos',
+  invalidDate: 'Data inválida',
+  futureDateOfBirth: 'Data de nascimento não pode ser no futuro',
+  invalidZipCode: 'CEP deve ter 8 dígitos',
+  fullNameTooShort: 'Informe nome e sobrenome',
 
   all: 'Todos',
   active: 'Ativo',

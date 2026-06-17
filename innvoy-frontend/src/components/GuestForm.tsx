@@ -2,22 +2,11 @@ import { useState } from 'react';
 import type { Guest } from '../types/guest';
 import { toFormState, toGuest, type FormState, STEP1_KEYS, STEP2_KEYS } from './wizard/formState';
 import { useLang } from '@/i18n/context';
+import { validateFirstError } from '@/lib/validation';
 import Step1 from './wizard/Step1';
 import Step2 from './wizard/Step2';
 
 type FieldErrors = Record<string, string>;
-
-function validateRequired(
-  form: FormState,
-  keys: readonly (keyof FormState)[],
-  msg: string,
-): FieldErrors {
-  const errs: FieldErrors = {};
-  for (const k of keys) {
-    if (!form[k]) errs[k] = msg;
-  }
-  return errs;
-}
 
 function hasErrors(errs: FieldErrors): boolean {
   return Object.values(errs).some(Boolean);
@@ -41,14 +30,14 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
   const [deactivating, setDeactivating] = useState(false);
 
   const handleNext = () => {
-    const errs = validateRequired(form, STEP1_KEYS, t.requiredField);
+    const errs = validateFirstError(form, STEP1_KEYS, t);
     setStep1Errors(errs);
     if (hasErrors(errs)) return;
     setStep(2);
   };
 
   const handleSubmit = () => {
-    const errs = validateRequired(form, STEP2_KEYS, t.requiredField);
+    const errs = validateFirstError(form, STEP2_KEYS, t);
     setStep2Errors(errs);
     if (hasErrors(errs)) return;
     setSubmitting(true);
