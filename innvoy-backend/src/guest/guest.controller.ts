@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -27,6 +29,7 @@ export class GuestController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deactivate(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.facade.deactivate(id);
   }
