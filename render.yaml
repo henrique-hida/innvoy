@@ -45,7 +45,4 @@ services:
     dockerContext: ./innvoy-frontend
     envVars:
       - key: BACKEND_HOST
-        fromService:
-          name: innvoy-backend
-          type: web
-          property: host
+        value: innvoy-backend.onrender.com
