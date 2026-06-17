@@ -41,7 +41,7 @@ export default function GuestEdit() {
       <div className="mb-6 flex items-center gap-3">
         <Link
           to="/guests"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted-foreground/15"
+          className="flex h-7 w-7 items-center justify-center rounded-full text-[rgb(51,53,100)] transition-colors hover:bg-[rgba(51,53,100,0.1)]"
         >
           <ArrowLeftIcon className="h-4 w-4" />
         </Link>
