@@ -5,6 +5,7 @@ import { toFormState, toGuest, type FormState, STEP1_KEYS, STEP2_KEYS } from './
 import { useLang } from '@/i18n/context';
 import type { Translations } from '@/i18n/translations';
 import { validateFirstError } from '@/lib/validation';
+import { Stepper } from './wizard/Stepper';
 import Step1 from './wizard/Step1';
 import Step2 from './wizard/Step2';
 
@@ -120,6 +121,7 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
           </motion.p>
         )}
       </AnimatePresence>
+      <Stepper current={step} />
       <AnimatePresence mode="wait" initial={false}>
         {step === 1 ? (
           <motion.div

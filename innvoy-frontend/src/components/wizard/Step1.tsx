@@ -2,7 +2,6 @@ import type { ChangeEvent } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FormField } from './FormField';
-import { Stepper } from './Stepper';
 import { maskCPF, maskPhone, maskDate } from '@/lib/masks';
 import { useLang } from '@/i18n/context';
 import type { PersonalFields } from './formState';
@@ -32,8 +31,6 @@ export default function Step1({ fields, errors, isEditing, onChange, onNext }: P
 
   return (
     <>
-      <Stepper current={1} />
-
       <fieldset className="mb-5 rounded-xl border p-5">
         <legend className="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t.personalInfoLegend}

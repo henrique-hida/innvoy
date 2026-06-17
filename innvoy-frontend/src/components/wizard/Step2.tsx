@@ -7,7 +7,6 @@ import { maskZip } from '@/lib/masks';
 import { UF_TO_STATE } from '@/lib/states';
 import { useLang } from '@/i18n/context';
 import { FormField } from './FormField';
-import { Stepper } from './Stepper';
 import type { AddressFields } from './formState';
 
 type FieldErrors = Record<string, string>;
@@ -127,8 +126,6 @@ export default function Step2({
 
   return (
     <>
-      <Stepper current={2} />
-
       <fieldset className="mb-5 rounded-xl border p-5">
         <legend className="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t.addressLegend}
