@@ -77,6 +77,10 @@ const en = {
   guestCreated: 'Guest created successfully',
   guestUpdated: 'Guest updated successfully',
   guestDeactivated: 'Guest deactivated successfully',
+  seedData: 'Populate demo data',
+  clearData: 'Clear all data',
+  seedSuccess: 'Database populated with demo data',
+  clearSuccess: 'All data cleared',
 };
 
 const pt: typeof en = {
@@ -147,6 +151,10 @@ const pt: typeof en = {
   guestCreated: 'Hóspede cadastrado com sucesso',
   guestUpdated: 'Hóspede atualizado com sucesso',
   guestDeactivated: 'Hóspede desativado com sucesso',
+  seedData: 'Popular dados de demonstração',
+  clearData: 'Limpar todos os dados',
+  seedSuccess: 'Banco populado com dados de demonstração',
+  clearSuccess: 'Todos os dados foram removidos',
 };
 
 const es: typeof en = {
@@ -217,6 +225,10 @@ const es: typeof en = {
   guestCreated: 'Huésped registrado exitosamente',
   guestUpdated: 'Huésped actualizado exitosamente',
   guestDeactivated: 'Huésped desactivado exitosamente',
+  seedData: 'Poblar datos de demostración',
+  clearData: 'Borrar todos los datos',
+  seedSuccess: 'Base de datos poblada con datos de demostración',
+  clearSuccess: 'Todos los datos han sido eliminados',
 };
 
 export const translations = { en, pt, es };

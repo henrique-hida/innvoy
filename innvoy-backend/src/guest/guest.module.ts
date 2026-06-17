@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GuestController } from './guest.controller';
+import { GuestSeedController } from './guest-seed.controller';
 import { GuestFacade } from './guest.facade';
 import { GuestDAO } from './guest.dao';
 import { ValidateRequiredFieldsStrategy } from './strategies/validate-required-fields.strategy';
@@ -11,7 +12,7 @@ import { Address } from './domain/address';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Guest, Address])],
-  controllers: [GuestController],
+  controllers: [GuestSeedController, GuestController],
   providers: [
     GuestFacade,
     GuestDAO,

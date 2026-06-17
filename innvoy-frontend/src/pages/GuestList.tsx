@@ -204,22 +204,20 @@ export default function GuestList() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    let ignore = false;
+  const loadGuests = () => {
     void guestsApi
       .findAll({ active: true })
-      .then((data) => {
-        if (!ignore) setGuests(data);
-      })
+      .then((data) => setGuests(data))
       .catch((err: unknown) => {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : 'Failed to load guests');
-          setGuests([]);
-        }
+        setError(err instanceof Error ? err.message : 'Failed to load guests');
+        setGuests([]);
       });
-    return () => {
-      ignore = true;
-    };
+  };
+
+  useEffect(() => {
+    loadGuests();
+    window.addEventListener('guests-changed', loadGuests);
+    return () => window.removeEventListener('guests-changed', loadGuests);
   }, []);
 
   const handleEdit = (guest: Guest) => {

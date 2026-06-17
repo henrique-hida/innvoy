@@ -25,4 +25,6 @@ export const guestsApi = {
   create: (guest: Guest) => request<Guest>(BASE, { method: 'POST', body: JSON.stringify(guest) }),
   update: (guest: Guest) => request<Guest>(BASE, { method: 'PUT', body: JSON.stringify(guest) }),
   deactivate: (id: number) => request<void>(`${BASE}/${id}`, { method: 'DELETE' }),
+  seed: () => request<{ count: number }>(`${BASE}/seed`, { method: 'POST' }),
+  clearAll: () => request<void>(`${BASE}/seed`, { method: 'DELETE' }),
 };
