@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from './components/ui/dropdown-menu';
 import { DatabaseIcon, GlobeIcon } from 'lucide-react';
+import { BackendStatus } from './components/BackendStatus';
 import { LangProvider, useLang } from './i18n/context';
 import type { Lang } from './i18n/translations';
 
@@ -95,6 +96,7 @@ function Shell() {
           <img src={imagotipo} alt="innvoy" className="h-7 w-auto" />
         </Link>
         <div className="flex items-center gap-2">
+          <BackendStatus />
           <DataToggle />
           <LangToggle />
         </div>

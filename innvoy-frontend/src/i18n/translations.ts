@@ -81,6 +81,10 @@ const en = {
   clearData: 'Clear all data',
   seedSuccess: 'Database populated with demo data',
   clearSuccess: 'All data cleared',
+  backendOnline: 'Backend online',
+  backendOffline: 'Backend offline — click to reconnect',
+  backendConnecting: 'Connecting…',
+  backendConnected: 'Backend connected!',
 };
 
 const pt: typeof en = {
@@ -155,6 +159,10 @@ const pt: typeof en = {
   clearData: 'Limpar todos os dados',
   seedSuccess: 'Banco populado com dados de demonstração',
   clearSuccess: 'Todos os dados foram removidos',
+  backendOnline: 'Backend online',
+  backendOffline: 'Backend offline — clique para reconectar',
+  backendConnecting: 'Conectando…',
+  backendConnected: 'Backend conectado!',
 };
 
 const es: typeof en = {
@@ -229,6 +237,10 @@ const es: typeof en = {
   clearData: 'Borrar todos los datos',
   seedSuccess: 'Base de datos poblada con datos de demostración',
   clearSuccess: 'Todos los datos han sido eliminados',
+  backendOnline: 'Backend en línea',
+  backendOffline: 'Backend fuera de línea — clic para reconectar',
+  backendConnecting: 'Conectando…',
+  backendConnected: '¡Backend conectado!',
 };
 
 export const translations = { en, pt, es };
