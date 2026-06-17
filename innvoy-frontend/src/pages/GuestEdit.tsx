@@ -1,6 +1,7 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
+import { ArrowLeftIcon } from 'lucide-react';
 import GuestForm from '../components/GuestForm';
 import { guestsApi } from '../api/guests';
 import type { Guest } from '../types/guest';
@@ -37,14 +38,16 @@ export default function GuestEdit() {
       transition={{ duration: 0.35 }}
       className="mx-auto max-w-xl py-8"
     >
-      <Link
-        to="/guests"
-        className="mb-5 inline-flex items-center gap-1 text-sm text-primary hover:opacity-80"
-      >
-        {t.backToGuests}
-      </Link>
       <div className="mb-6 flex items-center gap-3">
-        <h2 className="text-2xl font-extrabold tracking-tight text-[rgb(51,53,100)]">{t.editGuestTitle}</h2>
+        <Link
+          to="/guests"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted-foreground/15"
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+        </Link>
+        <h2 className="text-2xl font-extrabold tracking-tight text-[rgb(51,53,100)]">
+          {t.editGuestTitle}
+        </h2>
         {!guest.active && <Badge variant="destructive">{t.inactive}</Badge>}
       </div>
       <GuestForm
