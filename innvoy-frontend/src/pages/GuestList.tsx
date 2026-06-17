@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { guestsApi } from '../api/guests';
 import type { Guest } from '../types/guest';
-import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,13 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,22 +35,7 @@ import type { Translations } from '@/i18n/translations';
 const formatCPF = (cpf: string) =>
   /^\d{11}$/.test(cpf) ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : cpf;
 
-type Status = 'all' | 'active' | 'inactive';
 const PAGE_SIZE = 10;
-
-function ActiveBadge() {
-  const { t } = useLang();
-  return (
-    <Badge variant="outline" className="border-green-300 bg-green-50 text-green-700">
-      {t.active}
-    </Badge>
-  );
-}
-
-function InactiveBadge() {
-  const { t } = useLang();
-  return <Badge variant="destructive">{t.inactive}</Badge>;
-}
 
 function matchesSearch(g: Guest, q: string): boolean {
   const digits = q.replace(/\D/g, '');
@@ -73,43 +50,11 @@ function applySearch(list: Guest[], search: string): Guest[] {
   return list.filter((g) => matchesSearch(g, q));
 }
 
-function filterByStatus(list: Guest[], status: Status): Guest[] {
-  if (status === 'all') return list;
-  return list.filter((g) => g.active === (status === 'active'));
-}
-
 function pageRange(current: number, total: number): (number | '...')[] {
   if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
   if (current <= 3) return [1, 2, 3, 4, '...', total];
   if (current >= total - 2) return [1, '...', total - 3, total - 2, total - 1, total];
   return [1, '...', current - 1, current, current + 1, '...', total];
-}
-
-interface StatusFilterProps {
-  value: Status;
-  onChange: (v: string | null) => void;
-}
-
-const STATUS_LABELS: Record<Status, keyof Translations> = {
-  all: 'all',
-  active: 'active',
-  inactive: 'inactive',
-};
-
-function StatusFilter({ value, onChange }: StatusFilterProps) {
-  const { t } = useLang();
-  return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="h-auto min-w-0 border-none bg-transparent p-0 text-xs font-medium uppercase tracking-wide text-muted-foreground shadow-none hover:text-foreground focus-visible:ring-0">
-        <SelectValue>{(v: Status) => t[STATUS_LABELS[v]]}</SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">{t.all}</SelectItem>
-        <SelectItem value="active">{t.active}</SelectItem>
-        <SelectItem value="inactive">{t.inactive}</SelectItem>
-      </SelectContent>
-    </Select>
-  );
 }
 
 interface GuestRowProps {
@@ -126,7 +71,6 @@ function GuestRow({ guest: g, onEdit, onDeactivate }: GuestRowProps) {
       <TableCell className="font-mono text-xs">{formatCPF(g.cpf)}</TableCell>
       <TableCell>{g.email}</TableCell>
       <TableCell>{g.phone}</TableCell>
-      <TableCell>{g.active ? <ActiveBadge /> : <InactiveBadge />}</TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
@@ -135,17 +79,13 @@ function GuestRow({ guest: g, onEdit, onDeactivate }: GuestRowProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onEdit(g)}>{t.edit}</DropdownMenuItem>
-            {g.active && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="text-destructive data-highlighted:bg-destructive/10 data-highlighted:text-destructive"
-                  onClick={() => onDeactivate(g.id!)}
-                >
-                  {t.deactivateGuest}
-                </DropdownMenuItem>
-              </>
-            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-destructive data-highlighted:bg-destructive/10 data-highlighted:text-destructive"
+              onClick={() => onDeactivate(g.id!)}
+            >
+              {t.deactivateGuest}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
@@ -189,8 +129,6 @@ function renderBody(
   guests: Guest[],
   loading: boolean,
   error: string,
-  status: Status,
-  onStatusChange: (v: string | null) => void,
   onEdit: (g: Guest) => void,
   onDeactivate: (id: number) => void,
   t: Translations,
@@ -217,9 +155,6 @@ function renderBody(
           <TableHead>{t.cpf}</TableHead>
           <TableHead>{t.email}</TableHead>
           <TableHead>{t.phone}</TableHead>
-          <TableHead>
-            <StatusFilter value={status} onChange={onStatusChange} />
-          </TableHead>
           <TableHead />
         </TableRow>
       </TableHeader>
@@ -236,7 +171,6 @@ export default function GuestList() {
   const { t } = useLang();
   const [guests, setGuests] = useState<Guest[] | null>(null);
   const [search, setSearch] = useState('');
-  const [status, setStatus] = useState<Status>('all');
   const [page, setPage] = useState(1);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -244,7 +178,7 @@ export default function GuestList() {
   useEffect(() => {
     let ignore = false;
     void guestsApi
-      .findAll({})
+      .findAll({ active: true })
       .then((data) => {
         if (!ignore) setGuests(data);
       })
@@ -268,24 +202,18 @@ export default function GuestList() {
     setPage(1);
   };
 
-  const handleStatus = (value: string | null) => {
-    setStatus((value ?? 'all') as Status);
-    setPage(1);
-  };
-
   const handleDeactivate = (id: number) => {
     if (!window.confirm(t.deactivateConfirm)) return;
     void guestsApi
       .deactivate(id)
-      .then(() => guestsApi.findAll({}))
+      .then(() => guestsApi.findAll({ active: true }))
       .then((data) => setGuests(data))
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : 'Failed to deactivate guest');
       });
   };
 
-  const byStatus = filterByStatus(guests ?? [], status);
-  const filtered = applySearch(byStatus, search);
+  const filtered = applySearch(guests ?? [], search);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const displayed = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
@@ -306,16 +234,7 @@ export default function GuestList() {
           className="max-w-sm"
         />
       </div>
-      {renderBody(
-        displayed,
-        guests === null,
-        error,
-        status,
-        handleStatus,
-        handleEdit,
-        handleDeactivate,
-        t,
-      )}
+      {renderBody(displayed, guests === null, error, handleEdit, handleDeactivate, t)}
       {totalPages > 1 && <PaginationBar page={page} total={totalPages} onPageChange={setPage} />}
     </div>
   );
