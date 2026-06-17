@@ -95,7 +95,7 @@ export default function GuestForm({ initial, onSubmit, onDeactivate, submitLabel
       .finally(() => setSubmitting(false));
   };
 
-  const handleDeactivateClick = () => {
+  const handleDeactivateClick = async () => {
     setConfirmOpen(true);
   };
 
