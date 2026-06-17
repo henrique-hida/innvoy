@@ -12,6 +12,7 @@ const en = {
   futureDateOfBirth: 'Date of birth cannot be in the future',
   invalidZipCode: 'ZIP code must have 8 digits',
   fullNameTooShort: 'Enter first and last name',
+  fullNameInvalid: 'Name must contain only letters',
   cpfAlreadyRegistered: 'CPF already registered',
   invalidEmailFormat: 'Invalid email format',
 
@@ -84,6 +85,7 @@ const pt: typeof en = {
   futureDateOfBirth: 'Data de nascimento não pode ser no futuro',
   invalidZipCode: 'CEP deve ter 8 dígitos',
   fullNameTooShort: 'Informe nome e sobrenome',
+  fullNameInvalid: 'Nome deve conter apenas letras',
   cpfAlreadyRegistered: 'CPF já cadastrado',
   invalidEmailFormat: 'Formato de e-mail inválido',
 

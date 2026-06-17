@@ -60,7 +60,10 @@ function isFutureDate(display: string): boolean {
 type Validator = (value: string, t: Translations) => string | null;
 
 const fieldValidators: Partial<Record<keyof FormState, Validator>> = {
-  fullName: (v, t) => (v.trim().split(/\s+/).length < 2 ? t.fullNameTooShort : null),
+  fullName: (v, t) => {
+    if (/\d/.test(v)) return t.fullNameInvalid;
+    return v.trim().split(/\s+/).length < 2 ? t.fullNameTooShort : null;
+  },
   cpf: (v, t) => (isValidCpfDigits(v) ? null : t.invalidCpf),
   dateOfBirth: (v, t) => {
     if (!isValidDate(v)) return t.invalidDate;
