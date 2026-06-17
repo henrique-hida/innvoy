@@ -34,7 +34,8 @@ const en = {
   status: 'Status',
   edit: 'Edit',
   loading: 'Loading…',
-  noGuests: 'No guests found.',
+  noGuests: 'No guests here yet',
+  noGuestsHint: 'Register your first guest to get started',
 
   // pages
   newGuestTitle: 'New guest',
@@ -118,7 +119,8 @@ const pt: typeof en = {
   status: 'Status',
   edit: 'Editar',
   loading: 'Carregando…',
-  noGuests: 'Nenhum hóspede encontrado.',
+  noGuests: 'Nenhum hóspede por aqui ainda',
+  noGuestsHint: 'Cadastre seu primeiro hóspede para começar',
 
   newGuestTitle: 'Novo hóspede',
   editGuestTitle: 'Editar hóspede',
@@ -196,7 +198,8 @@ const es: typeof en = {
   status: 'Estado',
   edit: 'Editar',
   loading: 'Cargando…',
-  noGuests: 'No se encontraron huéspedes.',
+  noGuests: 'Aún no hay huéspedes',
+  noGuestsHint: 'Registre su primer huésped para empezar',
 
   newGuestTitle: 'Nuevo huésped',
   editGuestTitle: 'Editar huésped',

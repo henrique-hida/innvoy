@@ -30,7 +30,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { FrownIcon, MoreHorizontalIcon, PlusIcon } from 'lucide-react';
+import { MoreHorizontalIcon, PlusIcon } from 'lucide-react';
+import { EmptyBed } from '@/components/EmptyBed';
 import { useLang } from '@/i18n/context';
 import type { Translations } from '@/i18n/translations';
 
@@ -158,15 +159,33 @@ function renderBody(
     );
   if (guests.length === 0)
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="flex flex-col items-center gap-3 py-12 text-center"
-      >
-        <FrownIcon className="size-10 text-muted-foreground" aria-hidden="true" />
-        <p className="text-muted-foreground">{t.noGuests}</p>
-      </motion.div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t.fullName}</TableHead>
+            <TableHead>{t.cpf}</TableHead>
+            <TableHead>{t.email}</TableHead>
+            <TableHead>{t.phone}</TableHead>
+            <TableHead />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <tr>
+            <TableCell colSpan={5}>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+                className="flex flex-col items-center gap-2 py-10"
+              >
+                <EmptyBed />
+                <p className="text-sm font-medium text-muted-foreground">{t.noGuests}</p>
+                <p className="text-xs text-muted-foreground/60">{t.noGuestsHint}</p>
+              </motion.div>
+            </TableCell>
+          </tr>
+        </TableBody>
+      </Table>
     );
   return (
     <Table>
