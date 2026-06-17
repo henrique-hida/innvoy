@@ -29,7 +29,7 @@ export default function GuestCreate() {
       >
         {t.backToGuests}
       </Link>
-      <h2 className="mb-6 text-2xl font-extrabold tracking-tight text-foreground/70">{t.newGuestTitle}</h2>
+      <h2 className="mb-6 text-2xl font-extrabold tracking-tight text-[rgb(51,53,100)]">{t.newGuestTitle}</h2>
       <GuestForm onSubmit={handleSubmit} submitLabel={t.createGuest} />
     </motion.div>
   );

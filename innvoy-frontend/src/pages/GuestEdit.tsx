@@ -44,7 +44,7 @@ export default function GuestEdit() {
         {t.backToGuests}
       </Link>
       <div className="mb-6 flex items-center gap-3">
-        <h2 className="text-2xl font-extrabold tracking-tight text-foreground/70">{t.editGuestTitle}</h2>
+        <h2 className="text-2xl font-extrabold tracking-tight text-[rgb(51,53,100)]">{t.editGuestTitle}</h2>
         {!guest.active && <Badge variant="destructive">{t.inactive}</Badge>}
       </div>
       <GuestForm

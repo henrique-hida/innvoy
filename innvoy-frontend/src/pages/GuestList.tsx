@@ -262,7 +262,7 @@ export default function GuestList() {
       className="py-8"
     >
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-extrabold tracking-tight text-foreground/70">{t.guests}</h2>
+        <h2 className="text-2xl font-extrabold tracking-tight text-[rgb(51,53,100)]">{t.guests}</h2>
         <Link to="/guests/new" className={buttonVariants()}>
           <PlusIcon />
           {t.newGuest}
