@@ -46,19 +46,6 @@ const formatPhone = (phone: string) => {
 
 const PAGE_SIZE = 10;
 
-function matchesSearch(g: Guest, q: string): boolean {
-  const digits = q.replace(/\D/g, '');
-  const byText = g.fullName.toLowerCase().includes(q) || g.email.toLowerCase().includes(q);
-  if (!digits) return byText;
-  return byText || g.cpf.includes(digits) || g.phone.replace(/\D/g, '').includes(digits);
-}
-
-function applySearch(list: Guest[], search: string): Guest[] {
-  if (!search) return list;
-  const q = search.toLowerCase();
-  return list.filter((g) => matchesSearch(g, q));
-}
-
 function pageRange(current: number, total: number): (number | '...')[] {
   if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
   if (current <= 3) return [1, 2, 3, 4, '...', total];
@@ -211,9 +198,10 @@ export default function GuestList() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const loadGuests = () => {
+  const loadGuests = (term = '') => {
+    const filters = term ? { active: true, fullName: term } : { active: true };
     void guestsApi
-      .findAll({ active: true })
+      .findAll(filters)
       .then((data) => setGuests(data))
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : 'Failed to load guests');
@@ -223,9 +211,15 @@ export default function GuestList() {
 
   useEffect(() => {
     loadGuests();
-    window.addEventListener('guests-changed', loadGuests);
-    return () => window.removeEventListener('guests-changed', loadGuests);
+    const reload = () => loadGuests(search);
+    window.addEventListener('guests-changed', reload);
+    return () => window.removeEventListener('guests-changed', reload);
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => loadGuests(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const handleEdit = (guest: Guest) => {
     void navigate(`/guests/${guest.id}/edit`, { state: { guest } });
@@ -250,9 +244,9 @@ export default function GuestList() {
       });
   };
 
-  const filtered = applySearch(guests ?? [], search);
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const displayed = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const allGuests = guests ?? [];
+  const totalPages = Math.max(1, Math.ceil(allGuests.length / PAGE_SIZE));
+  const displayed = allGuests.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <motion.div

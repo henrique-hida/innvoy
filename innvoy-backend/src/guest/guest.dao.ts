@@ -1,8 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { Guest } from './domain/guest';
 import { IDAO } from '../core/idao';
+
+const TEXT_FIELDS: (keyof Guest)[] = ['fullName', 'cpf', 'phone', 'email'];
+
+function toSearchValue(key: string, value: unknown): unknown {
+  const k = key as keyof Guest;
+  if (TEXT_FIELDS.includes(k)) {
+    return ILike(`%${value as string}%`);
+  }
+  return value;
+}
+
+function buildWhere(filters: Partial<Guest>): FindOptionsWhere<Guest> {
+  const where: FindOptionsWhere<Guest> = {};
+  for (const [key, value] of Object.entries(filters)) {
+    if (value === undefined || value === null) continue;
+    (where as Record<string, unknown>)[key] = toSearchValue(key, value);
+  }
+  return where;
+}
 
 @Injectable()
 export class GuestDAO implements IDAO {
@@ -24,7 +43,7 @@ export class GuestDAO implements IDAO {
   }
 
   async findAll(filters: Partial<Guest>): Promise<Guest[]> {
-    return this.repo.find({ where: filters as FindOptionsWhere<Guest> });
+    return this.repo.find({ where: buildWhere(filters) });
   }
 
   async findByCPF(cpf: string): Promise<Guest | null> {

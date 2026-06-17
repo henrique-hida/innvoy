@@ -15,10 +15,20 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   return res.status === 204 ? (undefined as T) : (res.json() as Promise<T>);
 }
 
+export interface GuestQueryFilters {
+  active?: boolean;
+  fullName?: string;
+  cpf?: string;
+  phone?: string;
+  email?: string;
+}
+
 export const guestsApi = {
-  findAll(filters: { active?: boolean } = {}) {
+  findAll(filters: GuestQueryFilters = {}) {
     const params = new URLSearchParams();
-    if (filters.active !== undefined) params.set('active', String(filters.active));
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== undefined) params.set(key, String(value));
+    }
     const qs = params.toString();
     return request<Guest[]>(`${BASE}${qs ? `?${qs}` : ''}`);
   },
